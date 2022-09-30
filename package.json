@@ -2,7 +2,7 @@
   "private": true,
   "scripts": {
     "start": "yarn workspace greenlight-client-poc start",
-    "build": "yarn workspaces foreach run build",
+    "build": "yarn workspaces foreach run build && yarn workspace greenlight-client-poc prod",
     "clean": "yarn workspaces foreach run clean"
   },
   "workspaces": [
