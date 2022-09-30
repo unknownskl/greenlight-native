@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "license": "MIT",
   "scripts": {
-    "start": "tsc --build",
-    "build": "tsc",
+    "start": "node dist/index.js",
+    "build": "tsc --build",
     "clean": "rm -rf dist/ && rm -rf *.tsbuildinfo"
   },
   "devDependencies": {
