@@ -2,5 +2,10 @@ node_modules/
 dist/
 yarn-error.log
 *.tsbuildinfo
-.yarn/
-!.yarn/plugins/
+
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
