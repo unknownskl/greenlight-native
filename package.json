@@ -3,6 +3,7 @@
   "scripts": {
     "start": "cd client-poc && yarn start",
     "build": "yarn workspaces foreach -v run build && yarn workspace greenlight-client-poc prod",
+    "dev": "yarn build && echo \"---[ Starting application output ]--------------\" && yarn start",
     "clean": "yarn workspaces foreach -v run clean",
     "test": "yarn workspaces foreach -v run test"
   },

@@ -232,9 +232,6 @@ export default class xCloudApi {
                 'Authorization': 'Bearer '+ ((this._cloudType === 'home') ? this._tokenxHome : this._tokenxCloud),
             }).then((json:any) => {
 
-                // log(':: Exchange response ('+path+'):')
-                // log(json)
-
                 if(json.errorDetails !== undefined && json.errorDetails.code !== null){
                     reject(json.errorDetails)
 
@@ -290,7 +287,11 @@ export default class xCloudApi {
                             resolve(JSON.parse(responseData.toString()))
                         }
                     } else {
-                        reject('Error fetching '+host+path+'. Status: '+res.statusCode)
+                        reject({
+                            statuscode: res.statusCode,
+                            body: responseData.toString(),
+                            message: 'Error fetching '+host+path
+                        })
                     }
                 })
             })
@@ -341,7 +342,11 @@ export default class xCloudApi {
                             resolve(JSON.parse(responseData.toString()))
                         }
                     } else {
-                        reject('Error fetching '+host+path+'. Status: '+res.statusCode)
+                        reject({
+                            statuscode: res.statusCode,
+                            body: responseData.toString(),
+                            message: 'Error fetching '+host+path
+                        })
                     }
                 })
             })
