@@ -1,10 +1,10 @@
 {
   "private": true,
   "scripts": {
-    "start": "yarn workspace greenlight-client-poc start",
-    "build": "yarn workspaces foreach run build && yarn workspace greenlight-client-poc prod",
-    "clean": "yarn workspaces foreach run clean",
-    "test": "yarn workspaces foreach run test"
+    "start": "cd client-poc && yarn start",
+    "build": "yarn workspaces foreach -v run build && yarn workspace greenlight-client-poc prod",
+    "clean": "yarn workspaces foreach -v run clean",
+    "test": "yarn workspaces foreach -v run test"
   },
   "workspaces": [
     "packages/*",
