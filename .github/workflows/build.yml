@@ -1,0 +1,38 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - v*
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  release:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+
+    steps:
+      - name: Checkout Git repository
+        uses: actions/checkout@v3
+
+      - name: Install Node.js, NPM and Yarn
+        uses: actions/setup-node@v3.4.1
+        with:
+          node-version: 18
+
+      - name: Install yarn dependencies
+        run: yarn
+      
+      - name: Yarn build
+        run: yarn build
+
+      - name: Run tests
+        run: yarn test
+      
