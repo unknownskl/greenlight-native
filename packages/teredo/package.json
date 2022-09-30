@@ -1,0 +1,9 @@
+{
+    "name": "greenlight-teredo",
+    "version": "0.1.0",
+    "license": "MIT",
+    "scripts": {
+        "start": "tsc --build",
+        "clean": "rm -rf dist/ && rm -rf *.tsbuildinfo"
+    }
+}

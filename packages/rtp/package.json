@@ -1,0 +1,13 @@
+{
+    "name": "greenlight-rtp",
+    "version": "0.1.0",
+    "license": "MIT",
+    "scripts": {
+        "start": "tsc --build",
+        "clean": "rm -rf dist/ && rm -rf *.tsbuildinfo"
+    },
+    "dependencies": {
+        "@types/node": "^18.7.23",
+        "typescript": "^4.8.4"
+    }
+}

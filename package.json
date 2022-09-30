@@ -1,0 +1,13 @@
+{
+  "private": true,
+  "scripts": {
+    "start": "yarn --cwd client-poc start",
+    "build": "yarn workspaces foreach run build",
+    "clean": "yarn workspaces foreach run clean"
+  },
+  "workspaces": [
+    "packages/*",
+    "client-poc"
+  ],
+  "packageManager": "yarn@3.2.3"
+}

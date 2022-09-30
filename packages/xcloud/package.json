@@ -1,0 +1,18 @@
+{
+  "name": "greenlight-xcloud",
+  "version": "0.1.0",
+  "license": "MIT",
+  "main": "dist/index",
+  "scripts": {
+    "build": "tsc --build",
+    "clean": "rm -rf dist/ && rm -rf *.tsbuildinfo"
+  },
+  "dependencies": {
+    "debug": "^4.3.4"
+  },
+  "devDependencies": {
+    "@types/debug": "^4.1.7",
+    "@types/node": "^18.7.23",
+    "typescript": "^4.8.4"
+  }
+}
