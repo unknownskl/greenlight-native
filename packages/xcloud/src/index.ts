@@ -3,6 +3,12 @@ import debug from 'debug'
 
 const log = debug('xCloudApi')
 
+interface xCloudApiOptions {
+    ice_user: string;
+    ice_pwd: string;
+    interfaces: any;
+}
+
 export default class xCloudApi {
 
     _tokenxHome = ''
@@ -17,7 +23,7 @@ export default class xCloudApi {
         }
     }
 
-    startSession(type:'xhome'|'xcloud', entryId:string, options) {
+    startSession(type:'xhome'|'xcloud', entryId:string, options:xCloudApiOptions) {
         return new Promise((resolve, reject) => {
             
             if(type === 'xhome'){
@@ -74,31 +80,41 @@ export default class xCloudApi {
                         //     "Password": options.ice_pwd
                         // }
 
-                        // console.log(ice_config)
+                        // log(ice_config)
 
                         const ice_config = {
                             "Full":"1",
                             "PacingMs":"50",
                             "Version":"1",
                             "Candidates":{
-                               "count":"1",
-                               "0": { // STUN REQUEST
-                                    "transportAddress":options.ice_address,
-                                    "baseAddress":options.ice_address,
-                                    // "transportAddress":"192.168.178.129:64571",
-                                    // "baseAddress":"192.168.178.129:64571",
-                                    "serverAddress":"",
-                                    "ipv6":"0",
-                                    "type":"3",
-                                    "addressType":"0",
-                                    "priority":"2130705919",
-                                    "foundation":"1310976135",
-                                    "transport":"udp"
-                                },
+                               "count":0,
                             },
                             "Username": options.ice_user,
                             "Password": options.ice_pwd
                         }
+
+                        for(const iface in options.interfaces){
+                            // if(options.interfaces[iface].family !== "IPv4")
+                            //     continue
+
+                            // ice_config.Candidates[iface] = { // STUN REQUEST
+                            ice_config.Candidates[iface] = { // STUN REQUEST
+                                "transportAddress": options.interfaces[iface].address + ':' + options.interfaces[iface].port,
+                                "baseAddress": options.interfaces[iface].address + ':' + options.interfaces[iface].port,
+                                // "transportAddress":"192.168.178.129:64571",
+                                // "baseAddress":"192.168.178.129:64571",
+                                "serverAddress":"",
+                                "ipv6": options.interfaces[iface].family === 'IPv6' ? '1':'0',
+                                "type": "3",
+                                "addressType": options.interfaces[iface].scopeid,
+                                "priority":"2130705919",
+                                "foundation":"1310976135",
+                                "transport":"udp"
+                            }
+                        }
+                        ice_config.Candidates.count = Object.keys(ice_config.Candidates).length-1
+
+                        // log('Sending ice config:', ice_config)
 
                         configuration.ice_client = ice_config
 
@@ -219,7 +235,6 @@ export default class xCloudApi {
                 "candidates": JSON.stringify(ice_config)
             }).then((json:any) => {
                 resolve(json)
-
             }).catch((error) => {
                 reject(error)
             })
@@ -227,6 +242,7 @@ export default class xCloudApi {
     }
 
     _isExchangeReady(sessionId:string, path:string) {
+        // log(':: _isExchangeReady', sessionId, path)
         return new Promise((resolve, reject) => {
             this.getRequest('uks.gssv-play-prodxhome.xboxlive.com', '/v4/sessions/home/'+sessionId+'/'+path, {
                 'Authorization': 'Bearer '+ ((this._cloudType === 'home') ? this._tokenxHome : this._tokenxCloud),
@@ -246,6 +262,8 @@ export default class xCloudApi {
 
                 }  else {
                     setTimeout(() => {
+                    // log(':: _isExchangeReady result', json)
+
                         this._isExchangeReady(sessionId, path).then((json) => { resolve(json) }).catch((error) => { reject(error) })
                     }, 1000)
                 }
@@ -325,7 +343,7 @@ export default class xCloudApi {
                 headers: hostHeaders
             }
 
-            // console.log(options)
+            // log(options)
 
             const req = https.request(options, (res) => {
                 let responseData = ''

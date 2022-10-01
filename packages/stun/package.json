@@ -1,0 +1,25 @@
+{
+    "name": "greenlight-stun",
+    "version": "0.1.0",
+    "license": "MIT",
+    "main": "dist/index",
+    "scripts": {
+        "build": "tsc --build",
+        "clean": "rm -rf dist/ && rm -rf *.tsbuildinfo",
+        "test": "mocha -r ts-node/register tests/**.ts tests/**/*.ts"
+    },
+    "dependencies": {
+        "debug": "^4.3.4"
+    },
+    "devDependencies": {
+        "@types/chai": "^4",
+        "@types/debug": "^4.1.7",
+        "@types/mocha": "^10",
+        "@types/node": "^18.7.23",
+        "chai": "^4.3.6",
+        "mocha": "^10.0.0",
+        "stun": "^2.1.0",
+        "ts-node": "^10.9.1",
+        "typescript": "^4.8.4"
+    }
+}
