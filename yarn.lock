@@ -1384,7 +1384,24 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"greenlight-rtp@workspace:packages/rtp":
+"greenlight-gamestreaming@workspace:packages/gamestreaming":
+  version: 0.0.0-use.local
+  resolution: "greenlight-gamestreaming@workspace:packages/gamestreaming"
+  dependencies:
+    "@types/chai": ^4
+    "@types/debug": ^4.1.7
+    "@types/mocha": ^10
+    "@types/node": ^18.7.23
+    chai: ^4.3.6
+    debug: ^4.3.4
+    greenlight-rtp: "workspace:^"
+    mocha: ^10.0.0
+    ts-node: ^10.9.1
+    typescript: ^4.8.4
+  languageName: unknown
+  linkType: soft
+
+"greenlight-rtp@workspace:^, greenlight-rtp@workspace:packages/rtp":
   version: 0.0.0-use.local
   resolution: "greenlight-rtp@workspace:packages/rtp"
   dependencies:

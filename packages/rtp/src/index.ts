@@ -1,4 +1,5 @@
-export default class Rtp {
+import SrtpCrypto from './srtpcrypto'
+export default class RtpPacket {
 
     _buffer?:Buffer
 
@@ -72,6 +73,10 @@ export default class Rtp {
         this.payload.copy(buffer, 12)
 
         return buffer
+    }
+
+    getSrtpCrypto(){
+        return SrtpCrypto
     }
 
 }
