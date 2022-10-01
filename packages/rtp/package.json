@@ -4,7 +4,7 @@
     "license": "MIT",
     "main": "dist/index",
     "scripts": {
-        "build": "tsc --build",
+        "builddeps": "tsc --build",
         "clean": "rm -rf dist/ && rm -rf *.tsbuildinfo",
         "test": "mocha -r ts-node/register tests/**.ts tests/**/*.ts"
     },

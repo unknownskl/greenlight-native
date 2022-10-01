@@ -2,7 +2,6 @@ import { Socket } from "dgram"
 import RtpPacket from 'greenlight-rtp'
 import channels from './channels'
 import Events from './events'
-import SynPacket from './packets/core/syn'
 
 export default class GameStreaming {
 
@@ -120,7 +119,7 @@ export default class GameStreaming {
 
     _rtpSequence = 0
 
-    send(decoded_payload:Buffer, ssrc = 0, payloadType = 102, marker = 0){
+    send(decoded_payload:Buffer, ssrc, payloadType, marker = 0){
         const rtpPacket:RtpPacket = new RtpPacket()
         rtpPacket.header.payloadType = payloadType
         rtpPacket.header.marker = marker

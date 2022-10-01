@@ -1,5 +1,7 @@
-import SynPacket from '../packets/core/syn'
-import AckPacket from '../packets/core/ack'
+// import SynPacket from '../packets/core/syn'
+// import AckPacket from '../packets/core/ack'
+
+import { AckPacket, SynPacket, PingPacket, DisconnectPacket } from '../packets/core'
 import BaseChannel from './base'
 
 export default class CoreChannel extends BaseChannel {
@@ -10,17 +12,16 @@ export default class CoreChannel extends BaseChannel {
         super(application)
 
         this.application.events.once('packet_core_syn', (data) => {
-            console.log('GOT SYN PACKET:', data)
             const ack = new AckPacket({ mtu_size: data.model.mtu_size })
-            this.application.send(ack.toPacket(), 0)
+            this.application.send(ack.toPacket(), 0, 102)
         })
 
         this.application.events.once('packet_core_ack', (data) => {
-            console.log('GOT ACK PACKET:', data)
             clearInterval(this._sessionHandshakeInterval)
         })
 
         this.application.events.once('packet_core_ack_complete', (data) => {
+            // Ack is completed, setup heartbeat agreement
             console.log('HANDSHAKE COMPLETED')
 
             // Set connection settings?
@@ -35,36 +36,66 @@ export default class CoreChannel extends BaseChannel {
             const payload3 = Buffer.from('01001879000000000000', 'hex') // Set payloadType = 100
             this.application.send(payload3, 0, 100)
         })
+
+        this.application.events.on('packet_core_ping', (data) => {
+            // console.log('[CORE] packet_core_ping:', data)
+        })
+
+        this.application.events.on('packet_core_disconnect', (data) => {
+            console.log('[CORE] packet_core_disconnect:', data)
+            // @TODO: Implement disconnect logics
+        })
+
+        this.application.events.on('packet_core_unknown', (data) => {
+            console.log('[CORE] Unknown packet:', data)
+        })
     }
 
     route(packet, payload, rinfo){
-        // console.log('[CORE] pkt')
+        console.log('[CORE] pkt', packet)
 
-        if(payload[0] == 0x00 && payload[1] == 0x00){
+        // payloadType 101
+        if(packet.header.payloadType === 101 && (payload[0] == 0x00 && payload[1] == 0x00)){
             // const model = new SynPacket(payload)
             this.application.events.emit('packet_core_ack_complete', {
                 packet: packet,
                 model: undefined
             })
+        } else if(packet.header.payloadType === 101 && (payload[0] == 0xff && payload[1] == 0xff)){
+            const model = new DisconnectPacket(payload)
+            this.application.events.emit('packet_core_disconnect', {
+                packet: packet,
+                model: model
+            })
+        } else if(packet.header.payloadType === 101 && (payload[0] == 0x08 && payload[1] == 0x00)){
+            const model = new PingPacket(payload)
+            this.application.events.emit('packet_core_ping', {
+                packet: packet,
+                model: model
+            })
 
-        } else if(payload[0] == 0x01 && payload[1] == 0x00){
+        // payloadType 102
+        } else if(packet.header.payloadType === 102 && (payload[0] == 0x01 && payload[1] == 0x00)){
             const model = new SynPacket(payload)
             this.application.events.emit('packet_core_syn', {
                 packet: packet,
                 model: model
             })
-
-        } else if(payload[0] == 0x02 && payload[1] == 0x00){
+        } else if(packet.header.payloadType === 102 && (payload[0] == 0x02 && payload[1] == 0x00)){
             const model = new AckPacket(payload)
             this.application.events.emit('packet_core_ack', {
                 packet: packet,
                 model: model
             })
 
+        // other
         } else {
             this.application.events.emit('packet_core_unknown', {
                 packet: packet,
-                model: undefined
+                model: undefined,
+                debug: {
+                    payloadType: packet.header.payloadType
+                }
             })
         }
     }
@@ -79,7 +110,7 @@ export default class CoreChannel extends BaseChannel {
 
             if(payload !== undefined){
                 console.log('[CORE] Sending mtu syn:', mtuSize)
-                this.application.send(payload.slice(0, mtuSize), 0)
+                this.application.send(payload.slice(0, mtuSize), 0, 102)
             }
 
             if(mtuSize <= 1207){
