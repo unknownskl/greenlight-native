@@ -9,7 +9,7 @@
     "clean": "rm -rf dist/ && rm -rf *.tsbuildinfo"
   },
   "devDependencies": {
-    "@types/node": "^18.7.23",
+    "@types/node": "^18.8.0",
     "greenlight-xcloud": "^0.1.0",
     "ts-loader": "^9.4.1",
     "typescript": "^4.8.4",
