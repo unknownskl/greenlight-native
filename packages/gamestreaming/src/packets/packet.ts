@@ -138,14 +138,19 @@ export default class Packet {
                 readLength = 1
                 break
             case 'remainder':
-                value = this._packet.slice(this._offset)
-                readLength = value.length
+                if(length !== undefined){
+                    value = this._packet.slice(this._offset, 0-length)
+                    readLength = value.length-length
+                } else {
+                    value = this._packet.slice(this._offset)
+                    readLength = value.length
+                }
                 break
 
             case 'sgstring':
                 length = this._packet.readUInt16LE(this._offset)
                 value = this._packet.slice(this._offset + 2, length+this._offset + 2)
-                readLength = length+2
+                readLength = length+4 // Include 00 00 padding
                 break
 
             default:

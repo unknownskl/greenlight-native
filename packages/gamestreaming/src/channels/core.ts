@@ -7,6 +7,7 @@ import BaseChannel from './base'
 export default class CoreChannel extends BaseChannel {
 
     _sessionHandshakeInterval
+    _sessionConfirmInterval
 
     constructor(application) {
         super(application)
@@ -35,6 +36,11 @@ export default class CoreChannel extends BaseChannel {
             // Syn finished?
             const payload3 = Buffer.from('01001879000000000000', 'hex') // Set payloadType = 100
             this.application.send(payload3, 0, 100)
+
+            this.application.events.once('packet_core_ack', (data) => {
+                const payload4 = Buffer.from('51c16400fe0a0000002700f40164000000', 'hex') // Set payloadType = 100
+                this.application.send(payload4, 0, 35)
+            })
         })
 
         this.application.events.on('packet_core_ping', (data) => {
@@ -49,6 +55,36 @@ export default class CoreChannel extends BaseChannel {
         this.application.events.on('packet_core_unknown', (data) => {
             console.log('[CORE] Unknown packet:', data)
         })
+
+        // Confirm sequence
+        this.application._ms = this.application.getMs(true)
+        this._sessionConfirmInterval = setInterval(() => {
+            // Check every 10 ms for a core ack packet.
+
+            // console.log('cycle ack:', this.application.getMs(true), 'ms:', this.application.getMs())
+            if(this.application._serverSequenceChanged === true){
+                console.log('send ack:', this.application.getMs(true), 'ms:', this.application.getMs())
+
+                // const sequence = Buffer.from('0000', 'hex')
+                // sequence.writeUInt16LE(this.application.getServerSequence())
+                // const timestamp = Buffer.from('000000', 'hex')
+                // timestamp.writeUIntLE(this.application.getMs(), 0, 3)
+
+                // this.application.send(Buffer.concat([
+                //     Buffer.from('01c0', 'hex'),
+                //     sequence,
+                //     timestamp,
+                //     Buffer.from('0000' + '0000', 'hex')
+                // ]), 0, 35)
+
+                this.application.send(this.packHeader(Buffer.from('0000', 'hex'), {
+                    sequence: this.application.getClientSequence(),
+                    confirm: this.application.getServerSequence(),
+                    timestamp: this.application.getMs()
+                }), 0, 35)
+            }
+
+        }, 25)
     }
 
     route(packet, payload, rinfo){

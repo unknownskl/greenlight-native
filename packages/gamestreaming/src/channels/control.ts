@@ -1,5 +1,4 @@
-import SynPacket from '../packets/core/syn'
-import AckPacket from '../packets/core/ack'
+import { OpenChannelPacket, OpenChannelResponsePacket, DataPacket } from '../packets/control'
 import BaseChannel from './base'
 
 export default class ControlChannel extends BaseChannel {
@@ -10,9 +9,38 @@ export default class ControlChannel extends BaseChannel {
         super(application)
 
         this.application.events.on('packet_control_openchannel', (data) => {
-            console.log('GOT CONTROL OPEN CHANNEL:', data)
-            // const ack = new AckPacket({ mtu_size: data.model.mtu_size })
-            // this.application.send(ack.toPacket(), 0)
+            const minVersion = data.model.payload.readUInt32LE(0)
+            const maxVersion = data.model.payload.readUInt32LE(4)
+
+            const response = new OpenChannelResponsePacket({ payload: data.model.payload })
+            this.application.send(this.packHeader(response.toPacket(), {
+                confirm: this.application.getServerSequence(),
+                sequence: this.application.getClientSequence()
+            }), 1024, 97)
+
+            const payload2 = this.packHeader(Buffer.from('02000000000000000100000000000000000000000000000000002400000034424442333630392d433146312d343139352d394233372d4645464634354441384238450000', 'hex'), {
+                confirm: this.application.getServerSequence(),
+                sequence: this.application.getClientSequence()
+            })
+            this.application.send(payload2, 1024, 35)
+        })
+
+        this.application.events.on('packet_control_openchannel_ack', (data) => {
+            const payload3 = this.packHeader(Buffer.from('03000000000000000700404b4c000100050000d00200000000000003000000000000000100', 'hex'), {
+                confirm: this.application.getServerSequence(),
+                sequence: this.application.getClientSequence()
+            })
+            this.application.send(payload3, 1024, 35)
+
+            // const payload4 = this.packHeader(Buffer.from('0300010000000000040001000200', 'hex'), {
+            //     confirm: this.application.getServerSequence(),
+            //     sequence: this.application.getClientSequence()
+            // })
+            // this.application.send(payload4, 1024, 35)
+        })
+
+        this.application.events.on('packet_control_data', (data) => {
+            console.log('[CONTROL] !!!!!! Data packet', data)
         })
     }
 
@@ -21,22 +49,20 @@ export default class ControlChannel extends BaseChannel {
         console.log('[CONTROL] pkt', header)
 
 
-        if(header.payload[1] == 0x00){
-            // const model = new SynPacket(payload)
+        if(packet.header.payloadType === 97 && (header.payload[0] == 0x02)){
+            const model = new OpenChannelPacket(header.payload)
             this.application.events.emit('packet_control_openchannel', {
                 packet: packet,
                 header: header,
-                model: undefined
+                model: model
             })
-
-        } else if(header.payload[0] == 0x03 && header.payload[1] == 0x00){
-            // const model = new SynPacket(payload)
-            this.application.events.emit('packet_control_openchannel_open', {
+        } else if(packet.header.payloadType === 35 && (header.payload[0] == 0x02)){
+            const model = new OpenChannelPacket(header.payload)
+            this.application.events.emit('packet_control_openchannel_ack', {
                 packet: packet,
                 header: header,
-                model: undefined
+                model: model
             })
-
         } else {
             this.application.events.emit('packet_core_unknown', {
                 packet: packet,

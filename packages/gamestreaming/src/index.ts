@@ -21,6 +21,11 @@ export default class GameStreaming {
         InputFeedbackChannel: undefined,
     }
 
+    _rtpSequence = 0
+    _clientSequence = 99 // Next one will be 100.
+    _serverSequence = 99
+    _serverSequenceChanged = false
+
     constructor(socket:Socket, address:string, port:number, srtpkey:string){
         this.socket = socket
         this.target = {
@@ -45,6 +50,10 @@ export default class GameStreaming {
         for(const channel in channels){
             this.channels[channel] = new channels[channel](this)
         }
+
+        setInterval(() => {
+            console.log('-- 1 sec interval. SRTP:', this.target.srtpkey)
+        }, 1000)
     }
 
     onMessage(buffer, rinfo){
@@ -67,6 +76,11 @@ export default class GameStreaming {
 
     routePacket(packet, payload, rinfo){
         console.log('[CLIENT] recv [ssrc='+packet.header.ssrc+', seq='+packet.header.sequence+', pt='+packet.header.payloadType+']', payload)
+
+        // // if(packet.header.sequence > this._serverSequence){
+        //     this._serverSequence = packet.header.sequence
+        //     this._serverSequenceChanged = true
+        // // }
 
         switch(packet.header.ssrc){
             case 0:
@@ -117,7 +131,42 @@ export default class GameStreaming {
         this.channels.CoreChannel.startHandshake()
     }
 
-    _rtpSequence = 0
+    getClientSequence(){
+        this._clientSequence++
+        return this._clientSequence
+    }
+
+    getServerSequence(){
+        const seq = this._serverSequenceChanged ? this._serverSequence : undefined
+        this._serverSequenceChanged = false
+        return seq
+    }
+
+    setServerSequence(sequence){
+        if(sequence > this._serverSequence){
+            this._serverSequence = sequence
+            this._serverSequenceChanged = true
+
+            return true
+        }
+
+        return false
+    }
+
+    _ms = 0
+
+    getMs(absolute = false){
+
+        var hrTime = process.hrtime()
+        const currentMs = (hrTime[0] * 1000000 + hrTime[1] / 1000)
+
+        if(absolute === true){
+            return currentMs
+        } else {
+            const ts = Math.floor((currentMs - this._ms)/10)
+            return ts
+        }
+    }
 
     send(decoded_payload:Buffer, ssrc, payloadType, marker = 0){
         const rtpPacket:RtpPacket = new RtpPacket()
