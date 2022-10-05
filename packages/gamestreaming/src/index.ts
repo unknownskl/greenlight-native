@@ -91,32 +91,32 @@ export default class GameStreaming {
                 this.channels.ControlChannel.route(packet, payload, rinfo)
                 break
 
-            // case 1025:
-            //     this.channels.QosChannel.route()
-            //     break
+            case 1025:
+                this.channels.QosChannel.route(packet, payload, rinfo)
+                break
 
-            // case 1026:
-            //     this.channels.VideoChannel.route()
-            //     break
+            case 1026:
+                this.channels.VideoChannel.route(packet, payload, rinfo)
+                break
 
-            // case 1027:
-            //     this.channels.AudioChannel.route()
-            //     break
+            case 1027:
+                this.channels.AudioChannel.route(packet, payload, rinfo)
+                break
 
-            // case 1028:
-            //     this.channels.MessagingChannel.route()
-            //     break
+            case 1028:
+                this.channels.MessagingChannel.route(packet, payload, rinfo)
+                break
 
             // case 1029:
-            //     this.channels.ChatAudioChannel.route()
+            //     this.channels.ChatAudioChannel.route(packet, payload, rinfo)
             //     break
 
             // case 1030:
-            //     this.channels.InputChannel.route()
+            //     this.channels.InputChannel.route(packet, payload, rinfo)
             //     break
 
             // case 1031:
-            //     this.channels.InputFeedbackChannel.route()
+            //     this.channels.InputFeedbackChannel.route(packet, payload, rinfo)
             //     break
 
             default:

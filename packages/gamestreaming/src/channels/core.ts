@@ -26,19 +26,19 @@ export default class CoreChannel extends BaseChannel {
             console.log('HANDSHAKE COMPLETED')
 
             // Set connection settings?
-            const payload1 = Buffer.from('000003000c6400000000000000050000000000', 'hex') // Set payloadType = 100
+            const payload1 = Buffer.from('000003000c6400000000000000050000000000', 'hex')
             this.application.send(payload1, 0, 100)
 
             // Confirmation of stage of some sort (Maybe device type?)
-            const payload2 = Buffer.from('28000000120000000000', 'hex') // Set marker = 1, payloadType = 100
-            this.application.send(payload2, 0, 100, 1)
+            const payload2 = Buffer.from('28000000120000000000', 'hex')
+            this.application.send(payload2, 0, 101)
 
             // Syn finished?
-            const payload3 = Buffer.from('01001879000000000000', 'hex') // Set payloadType = 100
+            const payload3 = Buffer.from('01001879000000000000', 'hex')
             this.application.send(payload3, 0, 100)
 
             this.application.events.once('packet_core_ack', (data) => {
-                const payload4 = Buffer.from('51c16400fe0a0000002700f40164000000', 'hex') // Set payloadType = 100
+                const payload4 = Buffer.from('51c16400fe0a0000002700f40164000000', 'hex')
                 this.application.send(payload4, 0, 35)
             })
         })

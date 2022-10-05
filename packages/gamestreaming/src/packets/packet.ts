@@ -42,7 +42,7 @@ export default class Packet {
 
         switch(type){
             case 'bytes':
-                data.copy(this._packet, this._offset, 0)
+                Buffer.from(data).copy(this._packet, this._offset, 0)
                 writeLength = data.length
                 break
             case 'long':

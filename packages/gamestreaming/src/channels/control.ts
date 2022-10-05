@@ -12,7 +12,7 @@ export default class ControlChannel extends BaseChannel {
             const minVersion = data.model.payload.readUInt32LE(0)
             const maxVersion = data.model.payload.readUInt32LE(4)
 
-            const response = new OpenChannelResponsePacket({ payload: data.model.payload })
+            const response = new OpenChannelResponsePacket({ payload: data.model.payload.slice(2) })
             this.application.send(this.packHeader(response.toPacket(), {
                 confirm: this.application.getServerSequence(),
                 sequence: this.application.getClientSequence()
@@ -46,7 +46,7 @@ export default class ControlChannel extends BaseChannel {
 
     route(packet, payload, rinfo){
         const header = this.readHeader(payload)
-        console.log('[CONTROL] pkt', header)
+        // console.log('[CONTROL] pkt', header)
 
 
         if(packet.header.payloadType === 97 && (header.payload[0] == 0x02)){
@@ -64,7 +64,7 @@ export default class ControlChannel extends BaseChannel {
                 model: model
             })
         } else {
-            this.application.events.emit('packet_core_unknown', {
+            this.application.events.emit('packet_control_unknown', {
                 packet: packet,
                 header: header,
                 model: undefined

@@ -18,7 +18,7 @@ export default class OpenChannelPacket extends Packet {
             this.read('bytes', 2) // Read first 2 bytes
             this.channelName = this.read('sgstring').toString()
 
-            this.read('bytes', 2) // Read first 2 bytes
+            // this.read('bytes', 2) // Read first 2 bytes
             this.payload = this.read('remainder')
             
         } else {
@@ -32,7 +32,7 @@ export default class OpenChannelPacket extends Packet {
 
         this.write('bytes', Buffer.from('02000000', 'hex'))
         this.write('sgstring', this.channelName)
-        this.write('bytes', Buffer.from('0000', 'hex')) // null padding
+        // this.write('bytes', Buffer.from('0000', 'hex')) // null padding
 
         this.write('bytes', this.payload)
         return this.getPacket().slice(0, this.getOffset())
