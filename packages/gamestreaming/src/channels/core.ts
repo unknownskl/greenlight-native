@@ -53,7 +53,7 @@ export default class CoreChannel extends BaseChannel {
         })
 
         this.application.events.on('packet_core_unknown', (data) => {
-            console.log('[CORE] Unknown packet:', data)
+            // console.log('[CORE] Unknown packet:', data)
         })
 
         // Confirm sequence
@@ -88,7 +88,7 @@ export default class CoreChannel extends BaseChannel {
     }
 
     route(packet, payload, rinfo){
-        console.log('[CORE] pkt', packet)
+        // console.log('[CORE] pkt', packet)
 
         // payloadType 101
         if(packet.header.payloadType === 101 && (payload[0] == 0x00 && payload[1] == 0x00)){
