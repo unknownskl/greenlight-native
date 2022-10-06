@@ -36,7 +36,7 @@ export default class QosChannel extends BaseChannel {
                     } catch(error){
                         console.log('[QOS] WARNING: Unable to parse JSON policy:', error)
                     }
-                    this.application.events.emit('packet_qos_policyretrieved', { policy: fullPolicy })
+                    this.application.events.emit('application_qos_policy', { policy: fullPolicy })
                     console.log('[QOS] Policy retrieved:', fullPolicy)
 
                     // Send ack on policy retrieval

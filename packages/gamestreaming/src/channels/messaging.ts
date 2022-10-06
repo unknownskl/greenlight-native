@@ -43,7 +43,7 @@ export default class MessagingChannel extends BaseChannel {
             console.log('[MESSAGING] !!!!!! Data packet', data)
 
             if(data.model.type === 2) {
-
+                this.application.events.on('application_messaging_message'
             }
         })
 

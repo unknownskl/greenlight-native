@@ -41,8 +41,7 @@ export default class MessagePacket extends DataPacket {
 
             }
 
-            // this.next_sequence = payload.read('uint16')
-            this.next_sequence = 0
+            this.next_sequence = payload.read('uint16')
             
         } else {
             this.payload_type = packet.payload_type || 0

@@ -51,6 +51,11 @@ export default class GameStreaming {
             this.channels[channel] = new channels[channel](this)
         }
 
+        // Events:
+        // application_qos_policy -> QOS Policy retrieved
+        // application_messaging_message -> On message
+        // application_disconnect -> on disconnect [todo]
+
         setInterval(() => {
             console.log('-- 1 sec interval. SRTP:', this.target.srtpkey)
         }, 1000)
