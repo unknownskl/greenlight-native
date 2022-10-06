@@ -139,8 +139,8 @@ export default class Packet {
                 break
             case 'remainder':
                 if(length !== undefined){
-                    value = this._packet.slice(this._offset, 0-length)
-                    readLength = value.length-length
+                    value = this._packet.slice(this._offset, -length)
+                    readLength = value.length
                 } else {
                     value = this._packet.slice(this._offset)
                     readLength = value.length

@@ -124,6 +124,16 @@ export default class CoreChannel extends BaseChannel {
                 model: model
             })
 
+        // payloadType 35
+        } else if(packet.header.payloadType === 35 && (payload[0] == 0x01 && payload[1] == 0xc0)){
+            const model = {
+                header: this.readHeader(payload)
+            }
+            this.application.events.emit('packet_core_packet_ack', {
+                packet: packet,
+                model: model
+            })
+
         // other
         } else {
             this.application.events.emit('packet_core_unknown', {
