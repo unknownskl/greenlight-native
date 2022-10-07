@@ -62,7 +62,7 @@ export default class MessagePacket extends DataPacket {
             this.write('bytes', this.fragment_data)
         }
 
-        this.payload = this.getPacket().toString().slice(0, this.getOffset())
+        this.payload = this.getPacket().slice(0, this.getOffset())
         return this._toPacket()
     }
 }

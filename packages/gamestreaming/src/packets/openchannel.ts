@@ -2,12 +2,12 @@ import Packet from './packet'
 
 export interface OpenChannelOptions {
     channelName:string;
-    payload?:string
+    payload?:Buffer
 }
 
 export default class OpenChannelPacket extends Packet {
     channelName:string
-    payload:string
+    payload:Buffer
 
     constructor(packet:Buffer | OpenChannelOptions){
         super('OpenChannel')
@@ -23,7 +23,7 @@ export default class OpenChannelPacket extends Packet {
             
         } else {
             this.channelName = packet.channelName || ''
-            this.payload = packet.payload || Buffer.from('', 'hex').toString()
+            this.payload = packet.payload || Buffer.from('', 'hex')
         }
     }
 

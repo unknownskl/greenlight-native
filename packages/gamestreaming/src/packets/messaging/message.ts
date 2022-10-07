@@ -74,7 +74,7 @@ export default class MessagePacket extends DataPacket {
         }
         payload.write('uint16', this.next_sequence) // Next control
 
-        this.payload = payload.getPacket().toString().slice(0, payload.getOffset())
+        this.payload = payload.getPacket().slice(0, payload.getOffset())
         return this._toPacket()
     }
 }

@@ -17,7 +17,7 @@ export default class QosChannel extends BaseChannel {
                 timestamp: this.application.getMs(),
             }), 1025, 97)
 
-            const handshake = new OpenChannelPacket({ channelName: '', payload: Buffer.from('0000000002000000000000000000', 'hex').toString() })
+            const handshake = new OpenChannelPacket({ channelName: '', payload: Buffer.from('0000000002000000000000000000', 'hex') })
             this.application.send(this.packHeader(handshake.toPacket(), {
                 confirm: this.application.getServerSequence(),
                 sequence: this.application.getClientSequence(),

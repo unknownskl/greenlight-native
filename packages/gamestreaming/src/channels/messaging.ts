@@ -17,7 +17,7 @@ export default class MessagingChannel extends BaseChannel {
                 timestamp: this.application.getMs(),
             }), 1028, 97)
 
-            const handshake = new OpenChannelPacket({ channelName: '', payload: Buffer.from('000000000100000004000000010000000000', 'hex').toString() })
+            const handshake = new OpenChannelPacket({ channelName: '', payload: Buffer.from('000000000100000004000000010000000000', 'hex') })
             this.application.send(this.packHeader(handshake.toPacket(), {
                 confirm: this.application.getServerSequence(),
                 sequence: this.application.getClientSequence(),
