@@ -31,17 +31,20 @@ export default class ControlChannel extends BaseChannel {
                 sequence: this.application.getClientSequence()
             })
             this.application.send(payload3, 1024, 35)
-
-            // const payload4 = this.packHeader(Buffer.from('0300010000000000040001000200', 'hex'), {
-            //     confirm: this.application.getServerSequence(),
-            //     sequence: this.application.getClientSequence()
-            // })
-            // this.application.send(payload4, 1024, 35)
         })
 
         this.application.events.on('packet_control_data', (data) => {
             console.log('[CONTROL] !!!!!! Data packet', data)
         })
+    }
+
+    sendChannelsAck(){
+        const payload4 = this.packHeader(Buffer.from('0300010000000000040001000200', 'hex'), {
+            confirm: this.application.getServerSequence(),
+            sequence: this.application.getClientSequence(),
+            timestamp: this.application.getMs()
+        })
+        this.application.send(payload4, 1024, 35)
     }
 
     route(packet, payload, rinfo){

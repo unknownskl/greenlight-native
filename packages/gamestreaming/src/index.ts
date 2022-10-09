@@ -112,17 +112,17 @@ export default class GameStreaming {
                 this.channels.MessagingChannel.route(packet, payload, rinfo)
                 break
 
-            // case 1029:
-            //     this.channels.ChatAudioChannel.route(packet, payload, rinfo)
-            //     break
+            case 1029:
+                this.channels.ChatAudioChannel.route(packet, payload, rinfo)
+                break
 
-            // case 1030:
-            //     this.channels.InputChannel.route(packet, payload, rinfo)
-            //     break
+            case 1030:
+                this.channels.InputChannel.route(packet, payload, rinfo)
+                break
 
-            // case 1031:
-            //     this.channels.InputFeedbackChannel.route(packet, payload, rinfo)
-            //     break
+            case 1031:
+                this.channels.InputFeedbackChannel.route(packet, payload, rinfo)
+                break
 
             default:
                 console.log('[CLIENT] Unknown SSRC channel:', packet.header.ssrc)
@@ -171,6 +171,14 @@ export default class GameStreaming {
             const ts = Math.floor((currentMs - this._ms)/10)
             return ts
         }
+    }
+
+    _referenceTimestamp = process.hrtime()
+
+    getReferenceTimestamp(){
+        const end = process.hrtime(this._referenceTimestamp);
+        const elapsed = (end[0] * 1) + (end[1] / 1000);
+        return end[1]
     }
 
     send(decoded_payload:Buffer, ssrc, payloadType, marker = 0){

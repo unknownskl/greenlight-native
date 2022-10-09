@@ -51,7 +51,6 @@ export default class DataPacket extends Packet {
 
         this.write('bytes', this.payload)
 
-        console.log('debugheight, ', this)
         return this.getPacket().slice(0, this.getOffset())
     }
 }

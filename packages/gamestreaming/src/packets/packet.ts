@@ -68,6 +68,10 @@ export default class Packet {
                 this._packet.writeUInt32BE(data, this._offset)
                 writeLength = 4
                 break
+            case 'uint64':
+                this._packet.writeBigUInt64LE(data, this._offset)
+                writeLength = 8
+                break
             case 'boolean':
                 if(data === true){
                     this._packet.writeUInt8(1, this._offset)
@@ -81,7 +85,7 @@ export default class Packet {
                 this._packet.writeUInt16LE(data.length, this._offset)
                 Buffer.from(data).copy(this._packet, this._offset + 2, 0)
 
-                writeLength = data.length
+                writeLength = data.length // @TODO: Is this correct? I think we need to add the 2 padding bytes
                 break
     
         
@@ -133,6 +137,9 @@ export default class Packet {
                 value = this._packet.readUInt32BE(this._offset)
                 readLength = 4
                 break
+            case 'uint64':
+                value = this._packet.readBigUInt64LE()
+                readLength = 8
             case 'boolean':
                 value = (this._packet.readUInt8(this._offset) === 0) ? false : true
                 readLength = 1

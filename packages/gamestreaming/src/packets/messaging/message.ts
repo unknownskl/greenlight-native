@@ -3,7 +3,7 @@ import Packet from '../packet'
 
 export interface MessageOptions extends DataOptions {
     payload_type:number
-    payload_unk1?:number
+    ack_type?:number
     payload_timestamp?:Buffer
     payload_key:string
     payload_value:Buffer
@@ -14,7 +14,7 @@ export interface MessageOptions extends DataOptions {
 export default class MessagePacket extends DataPacket {
 
     payload_type:number
-    payload_unk1?:number
+    ack_type?:number // 0 = no ack needed, 1 = ack needed, 2 = is ack message
     payload_timestamp?:Buffer
     payload_key:string
     payload_value:Buffer
@@ -30,7 +30,7 @@ export default class MessagePacket extends DataPacket {
 
             if(this.payload_type === 2){
                 const payload_length = payload.read('uint32')
-                this.payload_unk1 = payload.read('uint32')
+                this.ack_type = payload.read('uint32')
                 this.payload_timestamp = payload.read('bytes', 8)
                 const key_length = payload.read('uint32')
                 const value_length = payload.read('uint32')
@@ -47,7 +47,7 @@ export default class MessagePacket extends DataPacket {
             this.payload_type = packet.payload_type || 0
 
             if(this.payload_type === 2){
-                this.payload_unk1 = packet.payload_unk1 || 0
+                this.ack_type = packet.ack_type || 0
                 this.payload_timestamp = packet.payload_timestamp || Buffer.from('0000000000000000', 'hex')
                 this.payload_key = packet.payload_key || Buffer.from('').toString()
                 this.payload_value = packet.payload_value || Buffer.from('')
@@ -63,7 +63,7 @@ export default class MessagePacket extends DataPacket {
         payload.write('uint32', this.payload_type)
         if(this.payload_type === 2){
             payload.write('uint32', this.payload_key.length+this.payload_value.length+28)
-            payload.write('uint32', this.payload_unk1)
+            payload.write('uint32', this.ack_type)
             payload.write('bytes', this.payload_timestamp)
             payload.write('uint32', this.payload_key.length)
             payload.write('uint32', this.payload_value.length)
@@ -73,6 +73,7 @@ export default class MessagePacket extends DataPacket {
             payload.write('bytes', this.payload_value)
         }
         payload.write('uint16', this.next_sequence) // Next control
+        this.frameid = this.next_sequence-1
 
         this.payload = payload.getPacket().slice(0, payload.getOffset())
         return this._toPacket()

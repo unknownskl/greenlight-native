@@ -26,13 +26,71 @@ export default class MessagingChannel extends BaseChannel {
         })
 
         this.application.events.on('packet_messaging_openchannel_ack', (data) => {
-            const handshake = new MessagePacket({
+            const systemui = new MessagePacket({
                 payload_type: 2,
                 payload_key: '/streaming/systemUi/configuration',
                 payload_value: Buffer.from('{"systemUis":[],"version":[0,2,0]}'),
                 next_sequence: 1,
+                payload_timestamp: Buffer.from('0d47f88a01000000', 'hex'),
             })
-            this.application.send(this.packHeader(handshake.toPacket(), {
+            this.application.send(this.packHeader(systemui.toPacket(), {
+                confirm: this.application.getServerSequence(),
+                sequence: this.application.getClientSequence(),
+                timestamp: this.application.getMs(),
+            }), 1028, 35)
+
+
+            const dimensions = new MessagePacket({
+                payload_type: 2,
+                payload_key: '/streaming/characteristics/dimensionschanged',
+                payload_value: Buffer.from('{"horizontal":150,"preferredHeight":720,"preferredWidth":1280,"safeAreaBottom":0,"safeAreaLeft":0,"safeAreaRight":0,"safeAreaTop":0,"supportsCustomResolution":false,"vertical":70}'),
+                next_sequence: 2,
+                payload_timestamp: Buffer.from('0e47f88a01000000', 'hex'),
+            })
+            this.application.send(this.packHeader(dimensions.toPacket(), {
+                confirm: this.application.getServerSequence(),
+                sequence: this.application.getClientSequence(),
+                timestamp: this.application.getMs(),
+            }), 1028, 35)
+
+
+            const orientation = new MessagePacket({
+                payload_type: 2,
+                payload_key: '/streaming/characteristics/orientationchanged',
+                payload_value: Buffer.from('{"orientation":0}'),
+                next_sequence: 3,
+                payload_timestamp: Buffer.from('0f47f88a01000000', 'hex'),
+            })
+            this.application.send(this.packHeader(orientation.toPacket(), {
+                confirm: this.application.getServerSequence(),
+                sequence: this.application.getClientSequence(),
+                timestamp: this.application.getMs(),
+            }), 1028, 35)
+
+
+            const party = new MessagePacket({
+                payload_type: 2,
+                payload_key: '/streaming/social/partyChatAudioCoordination/setPartyChatActive',
+                payload_value: Buffer.from('{"partyChatActive":false}'),
+                next_sequence: 4,
+                payload_timestamp: Buffer.from('1047f88a01000000', 'hex'),
+                ack_type: 1,
+            })
+            this.application.send(this.packHeader(party.toPacket(), {
+                confirm: this.application.getServerSequence(),
+                sequence: this.application.getClientSequence(),
+                timestamp: this.application.getMs(),
+            }), 1028, 35)
+
+
+            const clientapp = new MessagePacket({
+                payload_type: 2,
+                payload_key: '/streaming/properties/clientappinstallidchanged',
+                payload_value: Buffer.from('{"clientAppInstallId":"66354ea190f8a47031fff981236fac55"}'),
+                next_sequence: 5,
+                payload_timestamp: Buffer.from('1047f88a01000000', 'hex'),
+            })
+            this.application.send(this.packHeader(clientapp.toPacket(), {
                 confirm: this.application.getServerSequence(),
                 sequence: this.application.getClientSequence(),
                 timestamp: this.application.getMs(),

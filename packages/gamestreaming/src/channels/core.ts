@@ -50,6 +50,8 @@ export default class CoreChannel extends BaseChannel {
         this.application.events.on('packet_core_disconnect', (data) => {
             console.log('[CORE] packet_core_disconnect:', data)
             // @TODO: Implement disconnect logics
+
+            this.application.events.emit('application_disconnect', data)
         })
 
         this.application.events.on('packet_core_unknown', (data) => {
@@ -63,7 +65,7 @@ export default class CoreChannel extends BaseChannel {
 
             // console.log('cycle ack:', this.application.getMs(true), 'ms:', this.application.getMs())
             if(this.application._serverSequenceChanged === true){
-                console.log('send ack:', this.application.getMs(true), 'ms:', this.application.getMs())
+                // console.log('send ack:', this.application.getMs(true), 'ms:', this.application.getMs())
 
                 // const sequence = Buffer.from('0000', 'hex')
                 // sequence.writeUInt16LE(this.application.getServerSequence())
@@ -84,7 +86,7 @@ export default class CoreChannel extends BaseChannel {
                 }), 0, 35)
             }
 
-        }, 25)
+        }, 50)
     }
 
     route(packet, payload, rinfo){

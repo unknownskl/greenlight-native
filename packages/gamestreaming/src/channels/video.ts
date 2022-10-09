@@ -1,12 +1,21 @@
-import { OpenChannelPacket, OpenChannelResponsePacket, DataPacket, ConfigPacket } from '../packets/video'
+import { OpenChannelPacket, OpenChannelResponsePacket, DataPacket, ConfigPacket, FramePacket } from '../packets/video'
 import BaseChannel from './base'
+import Videobuffer from '../lib/videobuffer'
 
+import * as fs from 'fs'
 export default class VideoChannel extends BaseChannel {
 
     _sessionHandshakeInterval
+    _videoBuffer:Videobuffer
+    _videoBufferRunning = false
+    _referenceTimestamp = process.hrtime()
+
+    _sequence = 0
 
     constructor(application) {
         super(application)
+
+        this._videoBuffer = new Videobuffer()
 
         this.application.events.on('packet_video_openchannel', (data) => {
 
@@ -39,15 +48,84 @@ export default class VideoChannel extends BaseChannel {
                 sequence: this.application.getClientSequence()
             })
             this.application.send(payload2, 1026, 35)
+
+
+            const payload3 = this.packHeader(Buffer.from('030001000000000003000000010000000c000000220000000d4119310d4119310200', 'hex'), {
+                // confirm: this._session._serverSequence,
+                confirm: this.application.getServerSequence(),
+                sequence: this.application.getClientSequence()
+            })
+            this.application.send(payload3, 1026, 35)
         })
 
         this.application.events.on('packet_video_unknown', (data) => {
             console.log('[VIDEO] !!!!!! Unknown packet', data)
         })
 
-        // this.application.events.on('packet_video_data', (data) => {
-        //     console.log('[VIDEO] !!!!!! Data packet:', data)
-        // })
+        this.application.events.on('packet_video_data', (data) => {
+            // console.log('[VIDEO] !!!!!! Data packet:', data)
+
+            if(data.model.header_type === 5){
+                this._videoBufferRunning = true
+            }
+
+            if(this._videoBufferRunning === true){
+                this._videoBuffer.addFrame({
+                    frameId: data.model.frame_num,
+                    totalSize: data.model.frame_totalsize,
+                    offset: data.model.frame_offset,
+                    data: data.model.framedata,
+                    metadata: data.model.metadata,
+                })
+            }
+
+            // Ack video packet if metadata is present
+            if(data.model.metadata.length > 0){
+                const controlSequence = this.getSequence()
+                const prevSequence = controlSequence-1
+
+                let sequencePrev = Buffer.from('0000', 'hex')
+                sequencePrev.writeUInt16LE(prevSequence, 0)
+
+                let sequenceNow = Buffer.from('0000', 'hex')
+                sequenceNow.writeUInt16LE(controlSequence, 0)
+
+                let frameid = Buffer.from('00000000', 'hex')
+                frameid.writeUInt32LE(data.model.frame_num, 0)
+
+                let rendertime = Buffer.from('00000000', 'hex')
+                rendertime.writeUInt32LE(this.getReferenceTimestamp(), 0)
+
+                console.log('frameid:', frameid)
+
+                const videoAck = Buffer.concat([
+                    Buffer.from('0300', 'hex'),
+                    sequencePrev,
+                    Buffer.from('0000000003000000010000001000000080000000', 'hex'),
+                    frameid,
+                    rendertime, // Buffer.from('00000000', 'hex'), // unknown, try null?
+                    Buffer.from('00000000', 'hex'),
+                    sequenceNow
+                ])
+
+                const payload2 = this.packHeader(videoAck, {
+                    confirm: this.application.getServerSequence(),
+                    sequence: this.application.getClientSequence()
+                })
+                this.application.send(payload2, 1026, 35)
+            }
+        })
+
+
+
+        this.application.events.on('application_disconnect', (data) => {
+            console.log('[VIDEO] Dumping videobuffer to file...', data)
+
+            fs.writeFileSync('./video.mp4', this._videoBuffer.getBuffer(), { flag: 'w+' })
+
+            console.log('[VIDEO] File has been written: video.mp4')
+
+        })
     }
 
     route(packet, payload, rinfo){
@@ -82,8 +160,8 @@ export default class VideoChannel extends BaseChannel {
         } else if((packet.header.payloadType === 35 || packet.header.payloadType === 162) && (header.payload[0] == 0x00 || header.payload[0] == 0x01 || header.payload[0] == 0x05)){
             // Payloadtype 162 == 35, but greenlight-rtp has an bug that marks it as 162 so we use this as a workaround for now.
             // @TODO: Add tests for marker type with payloadtype 35.
-            
-            const model = new DataPacket(header.payload)
+
+            const model = new FramePacket(header.payload)
             this.application.events.emit('packet_video_data', {
                 packet: packet,
                 header: header,
@@ -96,6 +174,17 @@ export default class VideoChannel extends BaseChannel {
                 model: undefined
             })
         }
+    }
+
+    getSequence(){
+        this._sequence++
+        return this._sequence
+    }
+
+    getReferenceTimestamp(){
+        const end = process.hrtime(this._referenceTimestamp);
+        const elapsed = (end[0] * 1) + (end[1] / 1000);
+        return end[1]
     }
 
 }
