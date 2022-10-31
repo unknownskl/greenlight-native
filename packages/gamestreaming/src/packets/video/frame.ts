@@ -43,8 +43,8 @@ export default class FramePacket extends DataPacket {
             this.frame_offset = payload.read('uint32')
             const metadata_size = payload.read('uint32')
             const videoframe_size = payload.read('uint32')
-            this.framedata = payload.read('remainder', metadata_size+2)
             this.metadata = payload.read('bytes', metadata_size)
+            this.framedata = payload.read('remainder', 2)
 
             this.next_sequence = payload.read('uint16')
             

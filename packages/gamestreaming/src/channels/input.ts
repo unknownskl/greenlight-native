@@ -79,6 +79,8 @@ export default class InputChannel extends BaseChannel {
                 this.application.send(payload2, 1030, 35)
             }, 12) // Use an interval instead of an while loop to have concurrency
 
+            this.application.channels.CoreChannel.sendChannelsCompletedAck()
+
             this.application.events.once('application_disconnect', (data) => {
                 clearInterval(this._InputSenderInterval)
             })

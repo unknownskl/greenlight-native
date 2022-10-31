@@ -14,6 +14,7 @@ export default class CoreChannel extends BaseChannel {
 
         this.application.events.once('packet_core_syn', (data) => {
             const ack = new AckPacket({ mtu_size: data.model.mtu_size })
+            this.application.setMtu(data.model.mtu_size)
             this.application.send(ack.toPacket(), 0, 102)
         })
 
@@ -32,19 +33,25 @@ export default class CoreChannel extends BaseChannel {
             // Confirmation of stage of some sort (Maybe device type?)
             const payload2 = Buffer.from('28000000120000000000', 'hex')
             this.application.send(payload2, 0, 101)
+        
+            this.application.events.on('packet_core_ack_stage2', (data) => {
+                // Syn finished?
+                const payload3 = Buffer.from('01005c09000000000000', 'hex')
+                this.application.send(payload3, 0, 100)
+            })
 
-            // Syn finished?
-            const payload3 = Buffer.from('01001879000000000000', 'hex')
-            this.application.send(payload3, 0, 100)
-
-            this.application.events.once('packet_core_ack', (data) => {
+            this.application.events.once('packet_core_ack_stage3', (data) => {
                 const payload4 = Buffer.from('51c16400fe0a0000002700f40164000000', 'hex')
                 this.application.send(payload4, 0, 35)
             })
         })
 
         this.application.events.on('packet_core_ping', (data) => {
-            // console.log('[CORE] packet_core_ping:', data)
+            console.log('[CORE] packet_core_ping:', data)
+
+            const mtuPong = Buffer.alloc(this.application.getMtu())
+            mtuPong.writeInt16LE(this.application.getMtu())
+            this.application.send(mtuPong, 0, 101)
         })
 
         this.application.events.on('packet_core_disconnect', (data) => {
@@ -56,6 +63,13 @@ export default class CoreChannel extends BaseChannel {
 
         this.application.events.on('packet_core_unknown', (data) => {
             // console.log('[CORE] Unknown packet:', data)
+        })
+
+        this.application.events.once('packet_core_ack_reconfig', (data) => {
+            const mtuPong = Buffer.alloc(10)
+            mtuPong.writeInt16LE(this.application.getMtu())
+            mtuPong.writeInt16LE(18, 4)
+            this.application.send(mtuPong, 0, 101)
         })
 
         // Confirm sequence
@@ -105,9 +119,16 @@ export default class CoreChannel extends BaseChannel {
                 packet: packet,
                 model: model
             })
-        } else if(packet.header.payloadType === 101 && (payload[0] == 0x08 && payload[1] == 0x00)){
+        } else if(packet.header.payloadType === 101 && payload.length > 1300 ){
             const model = new PingPacket(payload)
             this.application.events.emit('packet_core_ping', {
+                packet: packet,
+                model: model
+            })
+
+        } else if(packet.header.payloadType === 101 && payload[4] === 0x09 ){
+            const model = new PingPacket(payload)
+            this.application.events.emit('packet_core_ack_reconfig', {
                 packet: packet,
                 model: model
             })
@@ -124,6 +145,20 @@ export default class CoreChannel extends BaseChannel {
             this.application.events.emit('packet_core_ack', {
                 packet: packet,
                 model: model
+            })
+
+        } else if(packet.header.payloadType === 100 && (payload[0] == 0x00)){
+            // const model = new AckPacket(payload)
+            this.application.events.emit('packet_core_ack_stage2', {
+                packet: packet,
+                model: false
+            })
+
+        } else if(packet.header.payloadType === 100 && (payload[0] == 0x02)){
+            // const model = new AckPacket(payload)
+            this.application.events.emit('packet_core_ack_stage3', {
+                packet: packet,
+                model: false
             })
 
         // payloadType 35
@@ -166,6 +201,11 @@ export default class CoreChannel extends BaseChannel {
                     clearInterval(this._sessionHandshakeInterval)
             }
         }, 10) // Use an interval instead of an while loop to have concurrency
+    }
+
+    sendChannelsCompletedAck(){
+        this.application.send(Buffer.from('52050000000000000000', 'hex'), 0, 101)
+        this.application.send(Buffer.from('20010000000000000000', 'hex'), 0, 101)
     }
 
 }

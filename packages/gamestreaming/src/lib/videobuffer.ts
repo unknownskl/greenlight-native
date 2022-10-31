@@ -38,8 +38,8 @@ export default class Videobuffer {
         }
 
         const videodata = Buffer.concat([
+            frame.metadata,
             frame.data,
-            // frame.metadata
         ])
         videodata.copy(this._frames[frame.frameId].buffer, frame.offset)
         this._frames[frame.frameId].received += frame.data.length

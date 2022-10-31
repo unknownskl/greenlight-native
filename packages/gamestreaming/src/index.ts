@@ -3,6 +3,7 @@ import RtpPacket from 'greenlight-rtp'
 import channels from './channels'
 import Events from './events'
 
+import * as fs from 'fs'
 export default class GameStreaming {
 
     socket:Socket
@@ -25,6 +26,7 @@ export default class GameStreaming {
     _clientSequence = 99 // Next one will be 100.
     _serverSequence = 99
     _serverSequenceChanged = false
+    _mtu = 0
 
     constructor(socket:Socket, address:string, port:number, srtpkey:string){
         this.socket = socket
@@ -59,6 +61,16 @@ export default class GameStreaming {
         setInterval(() => {
             console.log('-- 1 sec interval. SRTP:', this.target.srtpkey)
         }, 1000)
+
+        let callAmount = 0;
+        process.on('SIGINT', () => {
+            if(callAmount < 1) {
+                // this.emit('application_disconnect', {})
+                fs.writeFileSync('./video.mp4', this.channels.VideoChannel._videoBuffer.getBuffer(), { flag: 'w+' })
+
+                setTimeout(() => process.exit(0), 1000);
+            }
+        });
     }
 
     onMessage(buffer, rinfo){
@@ -80,7 +92,7 @@ export default class GameStreaming {
     }
 
     routePacket(packet, payload, rinfo){
-        console.log('[CLIENT] recv [ssrc='+packet.header.ssrc+', seq='+packet.header.sequence+', pt='+packet.header.payloadType+']', payload)
+        // console.log('[CLIENT] recv [ssrc='+packet.header.ssrc+', seq='+packet.header.sequence+', pt='+packet.header.payloadType+']', payload)
 
         // // if(packet.header.sequence > this._serverSequence){
         //     this._serverSequence = packet.header.sequence
@@ -179,6 +191,14 @@ export default class GameStreaming {
         const end = process.hrtime(this._referenceTimestamp);
         const elapsed = (end[0] * 1) + (end[1] / 1000);
         return end[1]
+    }
+
+    setMtu(size:number){
+        this._mtu = size
+    }
+
+    getMtu(){
+        return this._mtu
     }
 
     send(decoded_payload:Buffer, ssrc, payloadType, marker = 0){
