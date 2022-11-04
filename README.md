@@ -14,7 +14,7 @@ Install dependencies first:
 
     yarn
 
-Then edit client-poc/src/index.ts and fill-in the xbox streaming token on line 7. Also change your consoleid on line 24.
+Then edit `client-poc/src/index.ts` and fill-in the xbox streaming token on line `7`. Also change your consoleid on line `24`.
 
 After changing the above you can compile the script to a packed js file and run it via:
 
