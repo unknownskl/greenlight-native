@@ -24,6 +24,7 @@ After changing the above you can compile the script to a packed js file and run 
 
 | Folder | Description |
 |--------|-------------|
+| client-poc | CLI App which interacts with the libraries. |
 | packages/gamestreaming | Actual game streaming logic |
 | packages/rtp | Code for reading and creating RTP Packets |
 | packages/stun | Wrapper for node stun lib including fetching active interfaces |
