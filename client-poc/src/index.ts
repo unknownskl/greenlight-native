@@ -17,7 +17,7 @@ apiClient.getConsoles().then((consoles) => {
         ice_pwd: 'Pb0Abn9Lh0Zgy4WArNkJSfciloWd6JSQR\\/J2pzq1Dyg='
     })
 
-    stun.listen('en0').then((stunInterfaces) => {
+    stun.listen().then((stunInterfaces) => {
         // console.log(':: Stun Servers created:')
         // console.log(stunInterfaces)
 
@@ -33,6 +33,8 @@ apiClient.getConsoles().then((consoles) => {
             stun.setOnConnectionReady((socket, address, port) => {
                 const GSClient = new GameStreaming(socket, address, port, configuration.session.serverDetails.srtp.key)
             })
+        }).catch((error) => {
+            console.log('startSession error:', error)
         })
 
     }).catch((error) => {
