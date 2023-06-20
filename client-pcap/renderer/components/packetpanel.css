@@ -1,0 +1,36 @@
+div#app_packetpanel {
+    font-size: 12px;
+    position: relative;
+}
+
+div#app_packetpanel_left {
+    float: left;
+    width: 45vw;
+}
+
+div#app_packetpanel_right {
+    float: right;
+    width: 45vw;
+}
+
+div#app_packetpanel h2 {
+    font-size: 20px;
+    padding-top: 10px;
+    padding-left: 5px;
+}
+
+div#app_packetlist_raw pre {
+    height: 20vh;
+    overflow: auto;
+    width: 40vw;
+    padding-left: 5px;
+}
+
+div#app_packetlist_decrypted, div#app_packetlist_gs_new {
+    height: 30vh;
+    overflow: auto;
+    width: 40vw;
+    padding-left: 5px;
+    word-wrap: break-word;
+    font-family: monospace
+}

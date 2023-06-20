@@ -1,0 +1,54 @@
+div#app_menubar {
+    background: rgba(0, 0, 0, 0.5);
+    height: 30px;
+}
+
+div#app_menubar ul {
+    list-style: none;
+}
+
+div#app_menubar ul li {
+    text-align: center;
+    display: inline-block;
+    height: inherit;
+    vertical-align: middle;
+    padding-left: 10px;
+    padding-right: 10px;
+    font-size: 12px;
+    border-left: 1px solid rgba(255, 255, 255, 0.25);
+    position: relative;
+}
+
+div#app_menubar ul li a {
+    display: inline-block;
+    height: 30px;
+    padding-top: 6px;
+}
+
+div#app_menubar ul li:first-child {
+    border-left: 0px;
+}
+
+
+
+div#app_menubar ul li ul {
+    display: block;
+    background: rgba(0, 0, 0, 0.5);
+    position: absolute;
+    left: 10px;
+    padding-bottom: 10px;
+}
+
+div#app_menubar ul li ul li {
+    border-left: 0px;
+    text-align: left;
+}
+
+div#app_menubar ul li ul li a {
+    display: inline-block;
+    height: 30px;
+}
+
+div#app_menubar ul li:hover ul {
+    display: block;
+}

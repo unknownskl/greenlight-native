@@ -2,14 +2,17 @@
   "private": true,
   "scripts": {
     "start": "cd client-poc && yarn start",
+    "start-pcap": "cd client-pcap && yarn start",
     "build": "yarn workspaces foreach -pv run builddeps && yarn workspaces foreach -pv run build && yarn workspace greenlight-client-poc prod",
     "dev": "yarn build && echo \"---[ Starting application output ]--------------\" && cd client-poc && yarn dev",
+    "dev-pcap": "yarn build && echo \"---[ Starting application output ]--------------\" && cd client-pcap && yarn dev",
     "clean": "yarn workspaces foreach -pv run clean",
-    "test": "yarn workspaces foreach -pv run test"
+    "test": "yarn build && yarn workspaces foreach -pv run test"
   },
   "workspaces": [
     "packages/*",
-    "client-poc"
+    "client-poc",
+    "client-pcap"
   ],
   "packageManager": "yarn@3.2.3"
 }
