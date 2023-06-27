@@ -1,0 +1,13 @@
+{
+    "compilerOptions": {
+      /* Basic Options */
+      "declaration": true,
+      "declarationMap": true,
+      "sourceMap": true,
+      "composite": true,
+      "outDir": "./bin/dist",
+      "rootDir": "./"
+    },
+    "include": ["bin", "main/helpers/pcap"],
+    "exclude": ["bin/dist"]
+  }

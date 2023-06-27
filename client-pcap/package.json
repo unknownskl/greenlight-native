@@ -10,7 +10,8 @@
     "dev": "nextron",
     "build22": "nextron build",
     "postinstall": "electron-builder install-app-deps",
-    "install": ""
+    "install": "",
+    "pcaptest": "rm -rf bin/dist/ && tsc --p tsconfig-bin.json && node bin/dist/bin/testPcap.js"
   },
   "dependencies": {
     "electron-serve": "^1.1.0",
