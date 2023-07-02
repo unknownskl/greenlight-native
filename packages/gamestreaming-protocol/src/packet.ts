@@ -9,6 +9,8 @@ export interface Header {
     c1Value?:number
     nextSequence?:number
 
+    delayTimestamp?:number
+
     unkPadding1?:number
     unkPadding2?:number
 }
@@ -17,7 +19,6 @@ export default class Packet {
 
     private _packet?:Buffer
     private _type = 'Unknown'
-    private _headers = {}
 
     private _offset = 0
 
@@ -35,6 +36,10 @@ export default class Packet {
 
     getOffset(){
         return this._offset
+    }
+
+    setOffset(offset){
+        this._offset = offset
     }
 
     setPacket(packet:Buffer){
@@ -154,7 +159,7 @@ export default class Packet {
                 readLength = 1
                 break
             case 'remainder':
-                value = this._packet.slice(this._offset)
+                value = this._packet.slice(this._offset, length)
                 readLength = value.length
                 break
             case 'sgstring':
@@ -197,66 +202,10 @@ export default class Packet {
         return buffer
     }
 
-    readHeader() {
-        const headerBytes = this.read('bytes', 2)
-        const header:Header = {
-            bitflags: this._toBits(headerBytes)
+    checkReadAllBytes(packet:Packet){
+        if(packet.getPacket().length !== packet.getOffset()){
+            console.log('[GameStreamingProtocol] Warning: Packet length is bigger then offset. Remaining bytes:', (packet.getPacket().length-packet.getOffset()))
+            throw new Error('[GameStreamingProtocol] Warning: Packet length is bigger then offset. Remaining bytes: '+ (packet.getPacket().length-packet.getOffset()))
         }
-
-        if(header.bitflags[0].substr(7, 1) > 0) {
-            header.confirm = this.read('uint16')
-            header.timestamp = this.read('uint24')
-            const headerFlags = this.read('bytes', 2)
-            header.headerLength = parseInt(headerFlags.toString('hex').substr(-1))
-
-            if(header.headerLength > 0){
-                header.headerBytes = this.read('bytes', header.headerLength)
-            }
-        }
-
-        if(header.bitflags[1].substr(7, 1) > 0) {
-            // Has Padding set
-            header.c1Value = this.read('uint24')
-        }
-
-        if(header.bitflags[0].substr(1, 1) > 0) {
-            // Has Padding set
-            header.unkPadding1 = this.read('uint8')
-        }
-
-        if(header.bitflags[0].substr(3, 1) > 0) {
-            // Has Padding set
-            header.confirm = this.read('uint16')
-        }
-
-        if(header.bitflags[0].substr(5, 1) > 0) {
-            // Has Sequence set
-            header.sequence = this.read('uint16')
-        }
-
-        const headerSize = this._offset
-        const dataSize = this._packet.length-headerSize-2
-
-        const nextSequence = this._packet.slice(-2).readInt16LE()
-        if(nextSequence > 0){
-            header.nextSequence = nextSequence
-        }
-
-        if((headerSize+dataSize+2) != this._packet.length){
-            console.log('DATA SIZE ERROR')
-        }
-
-        this._headers = header
-    }
-
-    _toBits(payload:Buffer){
-        return [
-            this._hex2bin(payload.toString('hex').slice(0, 2)),
-            this._hex2bin(payload.toString('hex').slice(2, 4))
-        ]
-    }
-
-    _hex2bin(hex){
-        return (parseInt(hex, 16).toString(2)).padStart(8, '0');
     }
 }

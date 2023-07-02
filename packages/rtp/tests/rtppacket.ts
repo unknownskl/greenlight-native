@@ -4,6 +4,7 @@ import * as fs from 'fs'
 
 const rtp_init = fs.readFileSync('./tests/testdata/rtp_init.bin')
 const rtp_sequence = fs.readFileSync('./tests/testdata/rtp_sequence.bin')
+const rtp_marker = fs.readFileSync('./tests/testdata/rtp_marker.bin')
 
 describe('RtpPacket', () => {
 
@@ -53,6 +54,23 @@ describe('RtpPacket', () => {
             expect(packet.header.ssrc).equal(0)
 
             expect(packet.payload).deep.equal(Buffer.from('55fe006ce26a73b5699e0d96cae4772ad5b71e441a89', 'hex'))
+        })
+    })
+
+    describe('rtp_marker.bin', () => {
+
+        it('should read rtp_marker.bin', function(){
+            const packet = new RtpPacket()
+            packet.load(rtp_marker)
+
+            expect(packet.header.version).equal(2)
+            expect(packet.header.padding).equal(0)
+            expect(packet.header.extension).equal(0)
+            expect(packet.header.csrc).equal(0)
+
+            expect(packet.header.marker).equal(1)
+            expect(packet.header.payloadType).equal(163)
+            expect(packet.header.payloadTypeReal).equal(35)
         })
     })
 })

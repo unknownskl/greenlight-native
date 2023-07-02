@@ -11,6 +11,7 @@ export default class RtpPacket {
 
         marker: 0,
         payloadType: 0,
+        payloadTypeReal: 0,
 
         sequence: 0,
         timestamp: 0,
@@ -18,6 +19,11 @@ export default class RtpPacket {
     }
     
     payload:Buffer = Buffer.from('')
+
+    constructor(buffer?:Buffer){
+        if(buffer)
+            this.load(buffer)
+    }
     
     load(buffer:Buffer){
         this._buffer = buffer
@@ -35,8 +41,13 @@ export default class RtpPacket {
 		this.header.extension = (this._buffer[0] >>> 4 & 0x01)
 		this.header.csrc = (this._buffer[0] & 0x0F)
 
-        this.header.marker = (this._buffer[1] >>> 7 & 0x01)
-		this.header.payloadType = (this._buffer[1]-this.header.marker)
+        this.header.marker = (this._buffer[1] >>> 7 & 0x01) // & 0x128
+        if(this.header.marker){
+            this.header.payloadTypeReal = (this._buffer[1] ^ 128)
+        } else {
+            this.header.payloadTypeReal = (this._buffer[1])
+        }
+        this.header.payloadType = (this._buffer[1])
         
         this.header.sequence = this._buffer.readUInt16BE(2)
         this.header.timestamp = this._buffer.readUInt32BE(4)

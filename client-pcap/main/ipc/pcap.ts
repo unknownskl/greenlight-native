@@ -94,7 +94,7 @@ export default class IpcPcap {
                     this.pcapData[id].decrypted_payload = payload
 
                     // Decode using new protocol code
-                    this.pcapData[id].gs_payload = this.gsProtocol.lookup(this.pcapData[id].rtp_packet.header.payloadType, this.pcapData[id].rtp_packet.header.ssrc, payload)
+                    this.pcapData[id].gs_payload = this.gsProtocol.lookup(this.pcapData[id].rtp_packet.header.payloadTypeReal, this.pcapData[id].rtp_packet.header.ssrc, payload)
                 }
 
                 resolve(this.pcapData[id])
@@ -113,7 +113,7 @@ export default class IpcPcap {
                 packetList.push({
                     id: packet,
                     text: (this.pcapData[packet].is_teredo === true ? '<Teredo> ' : '') +
-                        (this.pcapData[packet].rtp_packet !== undefined ? '<RTP pt='+ this.pcapData[packet].rtp_packet.header.payloadType +' seq='+ this.pcapData[packet].rtp_packet.header.sequence +' ssrc='+ this.pcapData[packet].rtp_packet.header.ssrc +'>' : '') + 
+                        (this.pcapData[packet].rtp_packet !== undefined ? '<RTP pt='+ this.pcapData[packet].rtp_packet.header.payloadTypeReal +' seq='+ this.pcapData[packet].rtp_packet.header.sequence +' ssrc='+ this.pcapData[packet].rtp_packet.header.ssrc +'>' : '') + 
                         'Packet 1',
                     is_from_console: this.pcapData[packet].is_from_console
                 })
