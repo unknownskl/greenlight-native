@@ -935,7 +935,7 @@ describe('MuxDCTChannel', function () {
             const data = fs.readFileSync('tests/data/MuxDCTChannel/Data/Qos/Qos_End2.bin')
             const packet = loadPacket(data)
 
-            console.log(packet.gs_payload)
+            // console.log(packet.gs_payload)
 
             assert.equal((packet.gs_payload instanceof MuxDCTChannel), true)
             assert.equal((packet.gs_payload as MuxDCTChannel).type, Types.None)
@@ -1004,6 +1004,220 @@ describe('MuxDCTChannel', function () {
                         dataType: 1,
                         key: '/streaming/systemUi/configuration',
                         value: Buffer.from('7b2273797374656d556973223a5b5d2c2276657273696f6e223a5b302c322c305d7d', 'hex'),
+                    })
+                })
+            }, packet.rtp_packet.header.payloadTypeReal, packet.rtp_packet.header.ssrc)
+            
+            assert.deepEqual(encoded.toPacket(), packet.payload.slice(4))
+        });
+    });
+
+    describe('InputFeedback', function () {
+
+        it('should be able to decode (Config/InputFeedback)', function () {
+            const data = fs.readFileSync('tests/data/MuxDCTChannel/Config/InputFeedback.bin')
+            const packet = loadPacket(data, 'ios_local_21052022')
+
+            assert.equal((packet.gs_payload instanceof MuxDCTChannel), true)
+            assert.equal((packet.gs_payload as MuxDCTChannel).type, Types.Config)
+            assert.equal((packet.gs_payload as MuxDCTChannel).sequence, 0)
+            assert.equal((packet.gs_payload as MuxDCTChannel).nextSequence, 0)
+
+            assert.equal(((packet.gs_payload as MuxDCTChannel).data instanceof Formats.Config), true)
+            assert.equal(((packet.gs_payload as MuxDCTChannel).data.data instanceof Formats.ConfigFormats.Input), true)
+            assert.equal((packet.gs_payload as MuxDCTChannel).data.data.width, 1280)
+            assert.equal((packet.gs_payload as MuxDCTChannel).data.data.height, 720)
+            assert.equal((packet.gs_payload as MuxDCTChannel).data.data.touchpoints, 0)
+            assert.equal((packet.gs_payload as MuxDCTChannel).data.data.frameId, 3983891764)
+        });
+
+        it('should be able to encode (Config/InputFeedback)', function () {
+            const data = fs.readFileSync('tests/data/MuxDCTChannel/Config/InputFeedback.bin')
+            const packet = loadPacket(data, 'ios_local_21052022')
+            const encoded = new MuxDCTChannel({
+                type: Types.Config,
+                data: new Formats.Config({
+                    data: new Formats.ConfigFormats.Input({
+                        frameId: 3983891764,
+                    })
+                })
+            }, packet.rtp_packet.header.payloadTypeReal, packet.rtp_packet.header.ssrc)
+            
+            assert.deepEqual(encoded.toPacket(), packet.payload.slice(14))
+        });
+
+        it('should be able to decode (Config/InputAck)', function () {
+            const data = fs.readFileSync('tests/data/MuxDCTChannel/Config/InputAck.bin')
+            const packet = loadPacket(data, 'ios_local_21052022')
+
+            assert.equal((packet.gs_payload instanceof MuxDCTChannel), true)
+            assert.equal((packet.gs_payload as MuxDCTChannel).type, Types.Config)
+            assert.equal((packet.gs_payload as MuxDCTChannel).sequence, 0)
+            assert.equal((packet.gs_payload as MuxDCTChannel).nextSequence, 0)
+
+            assert.equal(((packet.gs_payload as MuxDCTChannel).data instanceof Formats.Config), true)
+            assert.equal(((packet.gs_payload as MuxDCTChannel).data.data instanceof Formats.ConfigFormats.InputAck), true)
+            assert.equal((packet.gs_payload as MuxDCTChannel).data.data.touchpoints, 0)
+            assert.equal((packet.gs_payload as MuxDCTChannel).data.data.relativeTimestamp, 1652909623540)
+        });
+
+        it('should be able to encode (Config/InputAck)', function () {
+            const data = fs.readFileSync('tests/data/MuxDCTChannel/Config/InputAck.bin')
+            const packet = loadPacket(data, 'ios_local_21052022')
+            const encoded = new MuxDCTChannel({
+                type: Types.Config,
+                data: new Formats.Config({
+                    data: new Formats.ConfigFormats.InputAck({
+                        relativeTimestamp: 1652909623540,
+                    })
+                })
+            }, packet.rtp_packet.header.payloadTypeReal, packet.rtp_packet.header.ssrc)
+            
+            assert.deepEqual(encoded.toPacket(), packet.payload.slice(13))
+        });
+
+    });
+
+    describe('Input', function () {
+
+        it('should be able to decode (Config/InputAck2)', function () {
+            const data = fs.readFileSync('tests/data/MuxDCTChannel/Config/InputAck2.bin')
+            const packet = loadPacket(data, 'ios_local_21052022')
+
+            assert.equal((packet.gs_payload instanceof MuxDCTChannel), true)
+            assert.equal((packet.gs_payload as MuxDCTChannel).type, Types.Config)
+            assert.equal((packet.gs_payload as MuxDCTChannel).sequence, 0)
+            assert.equal((packet.gs_payload as MuxDCTChannel).nextSequence, 0)
+
+            assert.equal(((packet.gs_payload as MuxDCTChannel).data instanceof Formats.Config), true)
+            assert.equal(((packet.gs_payload as MuxDCTChannel).data.data instanceof Formats.ConfigFormats.InputAck), true)
+            assert.equal((packet.gs_payload as MuxDCTChannel).data.data.touchpoints, 10)
+            assert.equal((packet.gs_payload as MuxDCTChannel).data.data.relativeTimestamp, 1652955837192)
+        });
+
+        it('should be able to encode (Config/InputAck2)', function () {
+            const data = fs.readFileSync('tests/data/MuxDCTChannel/Config/InputAck2.bin')
+            const packet = loadPacket(data, 'ios_local_21052022')
+            const encoded = new MuxDCTChannel({
+                type: Types.Config,
+                data: new Formats.Config({
+                    data: new Formats.ConfigFormats.InputAck({
+                        relativeTimestamp: 1652955837192,
+                        touchpoints: 10,
+                    })
+                })
+            }, packet.rtp_packet.header.payloadTypeReal, packet.rtp_packet.header.ssrc)
+            
+            assert.deepEqual(encoded.toPacket(), packet.payload.slice(13))
+        });
+
+        it('should be able to decode (Frame/Input)', function () {
+            const data = fs.readFileSync('tests/data/MuxDCTChannel/Frame/Input.bin')
+            const packet = loadPacket(data, 'ios_local_21052022')
+
+            assert.equal((packet.gs_payload instanceof MuxDCTChannel), true)
+            assert.equal((packet.gs_payload as MuxDCTChannel).type, Types.Frame)
+            assert.equal((packet.gs_payload as MuxDCTChannel).sequence, 0)
+            assert.equal((packet.gs_payload as MuxDCTChannel).nextSequence, 9)
+
+            assert.equal(((packet.gs_payload as MuxDCTChannel).data instanceof Formats.Frame), true)
+            assert.equal(((packet.gs_payload as MuxDCTChannel).data.data instanceof Formats.FrameFormats.Input), true)
+            assert.equal((packet.gs_payload as MuxDCTChannel).data.data.frameId, 2976380527)
+            assert.equal((packet.gs_payload as MuxDCTChannel).data.data.relativeTimestamp, 212915914679)
+            assert.equal((packet.gs_payload as MuxDCTChannel).data.data.stats_data.unknown1, 789502)
+            assert.equal((packet.gs_payload as MuxDCTChannel).data.data.stats_data.unknown5, 147)
+        });
+
+        it('should be able to encode (Frame/Input)', function () {
+            const data = fs.readFileSync('tests/data/MuxDCTChannel/Frame/Input.bin')
+            const packet = loadPacket(data, 'ios_local_21052022')
+            const encoded = new MuxDCTChannel({
+                type: Types.Frame,
+                nextSequence: 9,
+                data: new Formats.Frame({
+                    data: new Formats.FrameFormats.Input({
+                        frameId: 2976380527,
+                        relativeTimestamp: 212915914679,
+                        stats_data: new Formats.FrameFormats.InputFormats.Stats({
+                            unknown1: 789502,
+                            unknown2: 62,
+                            unknown3: 1,
+                            unknown4: 79,
+                            unknown5: 147,
+                        })
+                    })
+                })
+            }, packet.rtp_packet.header.payloadTypeReal, packet.rtp_packet.header.ssrc)
+            
+            assert.deepEqual(encoded.toPacket(), packet.payload.slice(4))
+        });
+
+        it('should be able to decode (Frame/Input_Gamepad)', function () {
+            const data = fs.readFileSync('tests/data/MuxDCTChannel/Frame/Input_Gamepad.bin')
+            const packet = loadPacket(data)
+
+            console.log((packet.gs_payload as MuxDCTChannel).data.data)
+
+            assert.equal((packet.gs_payload instanceof MuxDCTChannel), true)
+            assert.equal((packet.gs_payload as MuxDCTChannel).type, Types.Frame)
+            assert.equal((packet.gs_payload as MuxDCTChannel).sequence, 0)
+            // assert.equal((packet.gs_payload as MuxDCTChannel).nextSequence, 9)
+
+            // assert.equal(((packet.gs_payload as MuxDCTChannel).data instanceof Formats.Frame), true)
+            // assert.equal(((packet.gs_payload as MuxDCTChannel).data.data instanceof Formats.FrameFormats.Input), true)
+            // assert.equal((packet.gs_payload as MuxDCTChannel).data.data.frameId, 2976380527)
+            // assert.equal((packet.gs_payload as MuxDCTChannel).data.data.relativeTimestamp, 212915914679)
+            // assert.equal((packet.gs_payload as MuxDCTChannel).data.data.stats_data.unknown1, 789502)
+            // assert.equal((packet.gs_payload as MuxDCTChannel).data.data.stats_data.unknown5, 147)
+        });
+
+        // it('should be able to encode (Frame/Input)', function () {
+        //     const data = fs.readFileSync('tests/data/MuxDCTChannel/Frame/Input.bin')
+        //     const packet = loadPacket(data, 'ios_local_21052022')
+        //     const encoded = new MuxDCTChannel({
+        //         type: Types.Frame,
+        //         nextSequence: 9,
+        //         data: new Formats.Frame({
+        //             data: new Formats.FrameFormats.Input({
+        //                 frameId: 2976380527,
+        //                 relativeTimestamp: 212915914679,
+        //                 stats_data: new Formats.FrameFormats.InputFormats.Stats({
+        //                     unknown1: 789502,
+        //                     unknown2: 62,
+        //                     unknown3: 1,
+        //                     unknown4: 79,
+        //                     unknown5: 147,
+        //                 })
+        //             })
+        //         })
+        //     }, packet.rtp_packet.header.payloadTypeReal, packet.rtp_packet.header.ssrc)
+            
+        //     assert.deepEqual(encoded.toPacket(), packet.payload.slice(4))
+        // });
+
+        it('should be able to decode (Frame/Ack)', function () {
+            const data = fs.readFileSync('tests/data/MuxDCTChannel/Frame/Ack.bin')
+            const packet = loadPacket(data)
+
+            assert.equal((packet.gs_payload instanceof MuxDCTChannel), true)
+            assert.equal((packet.gs_payload as MuxDCTChannel).type, Types.Frame)
+            assert.equal((packet.gs_payload as MuxDCTChannel).sequence, 0)
+            assert.equal((packet.gs_payload as MuxDCTChannel).nextSequence, 1)
+
+            assert.equal(((packet.gs_payload as MuxDCTChannel).data instanceof Formats.Frame), true)
+            assert.equal(((packet.gs_payload as MuxDCTChannel).data.data instanceof Formats.FrameFormats.Ack), true)
+            assert.equal((packet.gs_payload as MuxDCTChannel).data.data.frameId, 3607612415)
+        });
+
+        it('should be able to encode (Frame/Ack)', function () {
+            const data = fs.readFileSync('tests/data/MuxDCTChannel/Frame/Ack.bin')
+            const packet = loadPacket(data)
+            const encoded = new MuxDCTChannel({
+                type: Types.Frame,
+                nextSequence: 1,
+                data: new Formats.Frame({
+                    data: new Formats.FrameFormats.Ack({
+                        frameId: 3607612415,
                     })
                 })
             }, packet.rtp_packet.header.payloadTypeReal, packet.rtp_packet.header.ssrc)

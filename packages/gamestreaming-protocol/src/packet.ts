@@ -205,7 +205,7 @@ export default class Packet {
     checkReadAllBytes(packet:Packet){
         if(packet.getPacket().length !== packet.getOffset()){
             console.log('[GameStreamingProtocol] Warning: Packet length is bigger then offset. Remaining bytes:', (packet.getPacket().length-packet.getOffset()))
-            throw new Error('[GameStreamingProtocol] Warning: Packet length is bigger then offset. Remaining bytes: '+ (packet.getPacket().length-packet.getOffset()))
+            // throw new Error('[GameStreamingProtocol] Warning: Packet length is bigger then offset. Remaining bytes: '+ (packet.getPacket().length-packet.getOffset()))
         }
     }
 }

@@ -2,7 +2,8 @@ import RTPPacket from 'greenlight-rtp'
 import GamestreamingProtocol from '../../src/index'
 
 export const keys = {
-    'default': 'vV9cuxwCpZ2iKGVFJhdLBcQ2mfSRzFvPj7+vTQbq'
+    'default': 'vV9cuxwCpZ2iKGVFJhdLBcQ2mfSRzFvPj7+vTQbq',
+    'ios_local_21052022': '/WKQp0Dcu2QFMHdHuH7JkyiW6ijkhLzGlaYY8gxv'
 }
 
 const gsProtocol = new GamestreamingProtocol()

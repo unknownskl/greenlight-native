@@ -102,6 +102,7 @@ export default class MuxDCTChannel extends DCTPacket {
                 this.data = new ConfigAckFormat(this.read('remainder', -2))
 
             } else {
+                console.log(this)
                 throw Error('src/formats/MuxDCTChannel.ts[constructor()]: Packet type not supported: '+this.type)
             }
 

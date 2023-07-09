@@ -71,6 +71,11 @@ export default class DCTPacket extends Packet {
             header.confirm = this.read('uint16')
         }
 
+        if(header.bitflags[0].substr(5, 1) > 0) {
+            // Has Sequence set
+            header.sequence = this.read('uint16')
+        }
+
         if(header.bitflags[0].substr(4, 1) > 0) {
             // Has Dropped connection header
             header.confirm = this.read('uint16')
@@ -85,19 +90,20 @@ export default class DCTPacket extends Packet {
             } else if(headerFlags === 130){
                 header.delayTimestamp = this.read('uint24')
 
-            } else if(headerFlags === 57){
-                header.headerBytes = this.read('bytes', 3)
+            // } else if(headerFlags === 57){
+            //     header.headerBytes = this.read('bytes', 3)
+
+            // } else if(headerFlags === 51){
+            //     header.headerBytes = this.read('bytes', 2)
+
+            // } else if(headerFlags === 9){
+            //     header.headerBytes = this.read('bytes', 2)
 
             } else {
                 console.log(this, header)
                 throw new Error('src/packet.ts: Unknown headerbyte flag: '+headerFlags)
             }
 
-        }
-
-        if(header.bitflags[0].substr(5, 1) > 0) {
-            // Has Sequence set
-            header.sequence = this.read('uint16')
         }
 
         const headerSize = this.getOffset()

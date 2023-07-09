@@ -5,6 +5,8 @@ import PcapIP from '../main/helpers/pcap/ip';
 import PcapUDP from '../main/helpers/pcap/udp';
 import * as fs from 'fs';
 
+import { AckTypes as DataMessageAckTypes } from 'greenlight-gamestreaming-protocol/dist/src/formats/MuxDCTChannel/Data/Message';
+
 class testPcap {
 
     pcapSession
@@ -14,9 +16,8 @@ class testPcap {
     clientip
 
     constructor(){
-        console.log(pcapp)
-        this.pcapSession = pcapp.parse('/Volumes/Data/poc/xcloud-streaming-node/pcaps/ios_local_21052022_filtered.pcap')
-        // this.pcapSession = pcapp.parse('/Volumes/Data/poc/xcloud-streaming-node/pcaps/button_test_02072022.pcap')
+        // this.pcapSession = pcapp.parse('/Volumes/Data/poc/xcloud-streaming-node/pcaps/ios_local_21052022_filtered.pcap')
+        this.pcapSession = pcapp.parse('/Volumes/Data/poc/xcloud-streaming-node/pcaps/button_test_02072022.pcap')
 
         this.pcapSession.on('packet', (packet) => ( this.processPacket(packet) ))
 
@@ -68,23 +69,16 @@ class testPcap {
             const rtpHandler = new RtpPacket()
             rtpHandler.load(rtpData)
             const SrtpCrypto = rtpHandler.getSrtpCrypto()
-            const crypto = new SrtpCrypto('/WKQp0Dcu2QFMHdHuH7JkyiW6ijkhLzGlaYY8gxv') // ios_local_21052022_filtered
-            // const crypto = new SrtpCrypto('vV9cuxwCpZ2iKGVFJhdLBcQ2mfSRzFvPj7+vTQbq') // button_test_02072022
+            // const crypto = new SrtpCrypto('/WKQp0Dcu2QFMHdHuH7JkyiW6ijkhLzGlaYY8gxv') // ios_local_21052022_filtered
+            const crypto = new SrtpCrypto('vV9cuxwCpZ2iKGVFJhdLBcQ2mfSRzFvPj7+vTQbq') // button_test_02072022
             const payload = crypto.decrypt(rtpHandler)
             packet.rtp_packet = rtpHandler
             packet.decrypted_payload = payload
 
-            // console.log('Reading packet id:', this.packetId)
-
-            if(rtpHandler.header.ssrc == 1031)
-                return {}
-
-            if(rtpHandler.header.ssrc == 1030)
-                return {}
-
             // Read decrypted data using new library
             packet.gs_payload = this.gsProtocol.lookup(packet.rtp_packet.header.payloadTypeReal, packet.rtp_packet.header.ssrc, payload)
             const output = this.processEnginePacket(packet)
+            // console.log(packet.gs_payload)
             if(output !== undefined)
                 console.log('['+((packet.ip.src_address === this.clientip) ? '->' : '<-')+']' + output)
         }
@@ -93,18 +87,7 @@ class testPcap {
     }
 
     processEnginePacket(packet){
-
-        // console.log(packet.gs_payload)
-
-        if(packet.rtp_packet.header.ssrc !== 1027)
-            return;
-
-        let typeTree = ''
-        if(packet.gs_payload.data !== undefined){ typeTree += '<'+((packet.gs_payload.data._type !== undefined) ? packet.gs_payload.data._type : 'Buffer['+packet.gs_payload.data.length+']')+'>'}
-        if(packet.gs_payload.data?.data !== undefined){ typeTree += '<'+((packet.gs_payload.data.data._type !== undefined) ? packet.gs_payload.data.data._type : 'Buffer['+packet.gs_payload.data.data.length+']')+'>'}
-        if(packet.gs_payload.data?.data?.data !== undefined){ typeTree += '<'+((packet.gs_payload.data.data.data._type !== undefined) ? packet.gs_payload.data.data.data._type : 'Buffer['+packet.gs_payload.data.data.data.length+']')+'>'}
-        if(packet.gs_payload.data?.data?.data?.data !== undefined){ typeTree += '<'+((packet.gs_payload.data.data.data.data._type !== undefined) ? packet.gs_payload.data.data.data.data._type : 'Buffer['+packet.gs_payload.data.data.data.data.length+']')+'>'}
-
+        const typeTree = this.buildFormatTree(packet.gs_payload)
 
         // Collect Video Data
         if(packet.rtp_packet.header.ssrc == 1026){
@@ -115,7 +98,28 @@ class testPcap {
             this.processAudioPacket(packet.gs_payload)
         }
 
-        return '['+this.packetId+'] [SSRC='+packet.rtp_packet.header.ssrc+'] '+packet.gs_payload.getType()+' '+typeTree
+        return '['+this.packetId+'] [SSRC='+packet.rtp_packet.header.ssrc+'] [H'+
+            ((packet.gs_payload._headers?.timestamp) ? ' ts=' + packet.gs_payload._headers.timestamp : '            ')+
+            ((packet.gs_payload._headers?.confirm) ? ' con=' + packet.gs_payload._headers.confirm : '         ')+
+            ((packet.gs_payload._headers?.sequence) ? ' seq=' + packet.gs_payload._headers.sequence : '         ')+
+        '] '+typeTree
+    }
+
+    buildFormatTree(payload){
+        if(payload !== undefined){
+            // ((payload._type !== undefined) && payload._type === 'MuxDCTControl') ? console.log(payload) : ''
+
+            return '<'+((payload._type !== undefined) ? payload._type : 'Buffer['+payload.length+']')+(
+                ((payload._type !== undefined) && payload._type === 'MuxDCTControl') ? ((payload.name && payload.name.length > 0) ? ' name=' + payload.name : '') :
+                // ((payload._type !== undefined) && payload._type === 'MuxDCTChannel') ? ((payload.timestamp !== undefined) ? ' ts=' + payload.timestamp : '') :
+                ((payload._type !== undefined) && payload._type === 'DataMessageFormat') ? ' #'+payload.frameId+' ackType='+DataMessageAckTypes[payload.ackType]+' key='+payload.key+' value['+payload.value.length+']' :
+                ((payload._type !== undefined) && payload._type === 'FrameVideoFormat') ? ' #'+payload.frameId+' ts='+payload.relativeTimestamp+((payload.metadata.length > 0) ? ' [metadata]' : '' )+'' :
+                ((payload._type !== undefined) && payload._type === 'DataDataVideoFormat') ? ' #'+payload.frameId+' ts='+payload.relativeTimestamp+'' :
+                ((payload._type !== undefined) && payload._type === 'DataDataAudioFormat') ? ' #'+payload.frameId+' ts='+payload.relativeTimestamp+'' : ''
+            )+'> ' + this.buildFormatTree(payload.data)
+        } else {
+            return ''
+        }
     }
 
     processVideoPacket(payload){
@@ -135,18 +139,18 @@ class testPcap {
 
     processAudioPacket(payload){
         // if(payload.data?.data === undefined &&payload.data?.data?.data?.getType === undefined && payload.data?.data?.data?.getType() === 'DataDataVideoFormat'){
-        //     console.log('\/-- Has video data')
+        //     console.log('\/-- Has audio data')
         // }
 
         if((!(payload.data instanceof Buffer)) && (payload.data.getType() === 'DataDataAudioFormat')){
             if(payload.data.data instanceof Buffer){
-                // console.log('\\/-- Has video data')
+                // console.log('\\/-- Has audio data')
                 this.processAudioData(payload.data)
             }
-        } else {
-            console.log(payload)
         }
     }
+
+
 
     // Video Dumper
     videoFrameBuffer = {}
@@ -211,16 +215,15 @@ class testPcap {
         console.log(__filename+'[endProcessVideo] video.pcap.mp4 has been written.')
     }
 
+
+
     // Audio Dumper
     audioFrameBuffer = {}
 
     processAudioData(payload){
-        console.log(payload)
-        
         this.audioFrameBuffer[payload.frameId] = {
             data: payload.data
         }
-        
     }
 
     endProcessAudio(){

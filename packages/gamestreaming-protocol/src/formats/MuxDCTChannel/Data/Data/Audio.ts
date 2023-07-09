@@ -54,6 +54,7 @@ export default class DataDataAudioFormat extends Packet {
                 this.data = this.read('remainder')
 
             } else {
+                console.log(this, type)
                 throw new Error(__filename+'[constructor()]: Unknown type: '+type)
             }
 
