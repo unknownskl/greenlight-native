@@ -5,6 +5,7 @@ import Events from './events'
 import CoreChannel from './channels/core'
 import ControlChannel from './channels/control'
 import GameStreamingProtocol from 'greenlight-gamestreaming-protocol'
+import MuxDCTChannel from 'greenlight-gamestreaming-protocol/dist/packets/MuxDCTChannel'
 
 enum ChannelSsrc {
     core = 0,
@@ -79,6 +80,9 @@ export default class GameStreaming {
 
         console.log(__filename+'[onMessage()] Received packet: ', msg, rinfo)
 
+        if((gsPayload as MuxDCTChannel)._headers && (gsPayload as MuxDCTChannel)._headers.sequence && (gsPayload as MuxDCTChannel)._headers.sequence > this._serverSequence){
+            this.setServerSequence((gsPayload as MuxDCTChannel)._headers.sequence)
+        }
 
         // Forward to channel
         switch(rtpPacket.header.ssrc){
@@ -97,6 +101,15 @@ export default class GameStreaming {
 
         // We assume that the application is ready and set all the starting integers etc at this point. Lets send out a handshake probe
         this.channels.core.startHandshake()
+    }
+
+    sendPayload(payload, ssrc, payloadType, marker = 0){
+        payload = payload.packHeader(payload.toPacket(), {
+            confirm: this.getServerSequence(),
+            sequence: this.getClientSequence()
+        })
+
+        this.send(payload, ssrc, payloadType, marker)
     }
 
     send(decoded_payload, ssrc, payloadType, marker = 0){

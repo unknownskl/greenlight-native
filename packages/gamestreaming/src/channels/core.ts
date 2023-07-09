@@ -1,11 +1,13 @@
 import GameStreamingProtocol, { PacketFormats } from 'greenlight-gamestreaming-protocol'
 import { Channel } from '../channel'
+import DCTPacket from 'greenlight-gamestreaming-protocol/dist/DCTPacket'
 
 console.log(GameStreamingProtocol)
 
 export default class CoreChannel extends Channel {
 
     _sessionHandshakeInterval
+    _sessionConfirmInterval
     _mtu = 0
 
     startHandshake(){
@@ -20,13 +22,7 @@ export default class CoreChannel extends Channel {
 
         let mtuSize = 1436+16
         this._sessionHandshakeInterval = setInterval(() => {
-            // const payload = new SynPacket({ mtu_size: 1436 }).toPacket()
             mtuSize = mtuSize-16
-
-            // if(payload !== undefined){
-            //     console.log('[CORE] Sending mtu syn:', mtuSize)
-            //     this.application.send(payload.slice(0, mtuSize), 0, 102)
-            // }
             const packetData = new PacketFormats.UDPConnectionProbing({
                 type: PacketFormats.UDPConnectionProbingTypes.Syn,
                 length: mtuSize
@@ -37,7 +33,22 @@ export default class CoreChannel extends Channel {
                 if(this._sessionHandshakeInterval !== undefined)
                     clearInterval(this._sessionHandshakeInterval)
             }
-        }, 10) // Use an interval instead of an while loop to have concurrency
+        }, 10)
+
+        // Core ACK messages
+        this._sessionConfirmInterval = setInterval(() => {
+            if(this.application._serverSequenceChanged === true){
+                console.log('send ack:', this.application.getMs(true), 'ms:', this.application.getMs())
+
+                const dummy = new DCTPacket(Buffer.from('0000', 'hex'))
+                this.application.send(dummy.packHeader(Buffer.from('0000', 'hex'), {
+                    sequence: this.application.getClientSequence(),
+                    confirm: this.application.getServerSequence(),
+                    timestamp: this.application.getMs()
+                }), 0, 35)
+            }
+
+        }, 50)
     }
 
     onMessage(rtp, payload){

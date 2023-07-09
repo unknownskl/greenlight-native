@@ -15,10 +15,10 @@ export class Channel {
         // console.log(payload)
 
         if(payload instanceof PacketFormats.MuxDCTControl && payload.type === PacketFormats.MuxDCTControlTypes.OpenChannel){
-            this.application.send(new PacketFormats.MuxDCTControl({
+            this.application.sendPayload(new PacketFormats.MuxDCTControl({
                 type: PacketFormats.MuxDCTControlTypes.Confirm,
-                data: Buffer.from('0200', 'hex')
-            }).toPacket(), rtp.header.ssrc, 97)
+                data: Buffer.from('0300', 'hex')
+            }), rtp.header.ssrc, 97)
 
         } else {
             console.log('Non-openchanel packet:', payload)

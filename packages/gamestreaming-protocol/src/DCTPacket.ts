@@ -17,6 +17,13 @@ export interface Header {
     unkPadding2?:number
 }
 
+export interface HeaderOptions {
+    sequence?:number
+    confirm?: number
+    timestamp?: number
+    header?: Buffer
+}
+
 export default class DCTPacket extends Packet {
     _headers:Header = {}
 
@@ -116,6 +123,59 @@ export default class DCTPacket extends Packet {
         }
 
         this._headers = header
+    }
+
+    packHeader(payload:Buffer, options:HeaderOptions){
+        // 14c068006a00 03000000000000000000
+
+        const data = new Packet(Buffer.alloc(2048))
+
+        let type = 'unknown'
+
+        if(options.confirm !== undefined && options.timestamp !== undefined && options.sequence !== undefined){
+            type = 'confirm_ms_header_sequence'
+            data.write('bytes', Buffer.from('05c0', 'hex'))
+
+        } else if(options.confirm !== undefined && options.sequence !== undefined){
+            type = 'confirm_sequence'
+            data.write('bytes', Buffer.from('14c0', 'hex'))
+
+        } else if(options.confirm !== undefined && options.timestamp !== undefined){
+            type = 'confirm_ms_header'
+            data.write('bytes', Buffer.from('01c0', 'hex'))
+
+        } else if(options.sequence !== undefined){
+            type = 'sequence'
+            data.write('bytes', Buffer.from('04c0', 'hex'))
+        }
+        // 14c0 = confirm + sequence
+        // 04c0 = sequence 
+        // 45c0 = confirm + ms + header + unk_uint8 + sequence
+        // 51c0 = confirm + ms + header + unk_uint8 + sequence
+        // 05c0 = confirm + ms + header (null) + sequence
+        // 01c0 = confirm + ms + header (null)
+
+        if(type === 'unknown')
+            throw new Error('Unable to craft packet header. Fatal error, exiting...')
+
+        if(type.includes('confirm'))
+            data.write('uint16', options.confirm)
+
+        if(type.includes('ms'))
+            data.write('uint24', options.timestamp)
+
+        if(type.includes('header')){
+            // data.writeBytes(options.header)
+            data.write('bytes', Buffer.from('0000', 'hex'))
+        }
+
+        if(type.includes('sequence'))
+            data.write('uint16', options.sequence)
+
+        data.write('bytes', payload)
+
+        return data.getPacket().slice(0, data.getOffset())
+
     }
 
     _toBits(payload:Buffer){
