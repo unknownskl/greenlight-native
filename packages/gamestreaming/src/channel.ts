@@ -1,0 +1,28 @@
+import GameStreamingProtocol, { PacketFormats } from 'greenlight-gamestreaming-protocol'
+import GameStreaming from './index'
+
+export class Channel {
+    application:GameStreaming
+
+    constructor(application:GameStreaming){
+        this.application = application
+    }
+
+    handleOpenChannel(rtp, payload){
+        // payload.name
+        // payload.data
+
+        // console.log(payload)
+
+        if(payload instanceof PacketFormats.MuxDCTControl && payload.type === PacketFormats.MuxDCTControlTypes.OpenChannel){
+            this.application.send(new PacketFormats.MuxDCTControl({
+                type: PacketFormats.MuxDCTControlTypes.Confirm,
+                data: Buffer.from('0200', 'hex')
+            }).toPacket(), rtp.header.ssrc, 97)
+
+        } else {
+            console.log('Non-openchanel packet:', payload)
+            throw new Error(__filename+'[handleOpenChannel()] Payload is not an OpenChannel packet')
+        }
+    }
+}

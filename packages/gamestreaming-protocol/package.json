@@ -2,9 +2,10 @@
     "name": "greenlight-gamestreaming-protocol",
     "version": "0.1.0",
     "license": "MIT",
-    "main": "dist/src/index",
+    "main": "dist/index",
     "scripts": {
-        "build": "rm -rf dist/ && tsc --build",
+        "builddeps": "tsc --skipLibCheck",
+        "build22": "rm -rf dist/ && tsc --build",
         "clean": "rm -rf dist/ && rm -rf *.tsbuildinfo",
         "test": "mocha -r ts-node/register tests/**.ts tests/**/*.ts"
     },

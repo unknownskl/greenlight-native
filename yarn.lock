@@ -4341,6 +4341,23 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"greenlight-gamestreaming-bu@workspace:packages/gamestreaming_backup":
+  version: 0.0.0-use.local
+  resolution: "greenlight-gamestreaming-bu@workspace:packages/gamestreaming_backup"
+  dependencies:
+    "@types/chai": ^4
+    "@types/debug": ^4.1.7
+    "@types/mocha": ^10
+    "@types/node": ^18.7.23
+    chai: ^4.3.6
+    debug: ^4.3.4
+    greenlight-rtp: "workspace:^"
+    mocha: ^10.1.0
+    ts-node: ^10.9.1
+    typescript: ^4.8.4
+  languageName: unknown
+  linkType: soft
+
 "greenlight-gamestreaming-protocol@workspace:^, greenlight-gamestreaming-protocol@workspace:packages/gamestreaming-protocol":
   version: 0.0.0-use.local
   resolution: "greenlight-gamestreaming-protocol@workspace:packages/gamestreaming-protocol"
@@ -4368,6 +4385,7 @@ __metadata:
     "@types/node": ^18.7.23
     chai: ^4.3.6
     debug: ^4.3.4
+    greenlight-gamestreaming-protocol: "workspace:^"
     greenlight-rtp: "workspace:^"
     mocha: ^10.1.0
     ts-node: ^10.9.1

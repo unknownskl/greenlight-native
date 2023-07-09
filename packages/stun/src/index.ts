@@ -1,5 +1,6 @@
 import * as os from 'os'
 import * as udp from 'dgram'
+import EventEmitter = require('events');
 const stun = require('stun')
 const { STUN_BINDING_RESPONSE, STUN_EVENT_BINDING_REQUEST, STUN_BINDING_REQUEST, STUNE_EVENT_BINDING_RESPONSE } = stun.constants;
 
@@ -8,6 +9,16 @@ interface StunServerOptions {
     ice_user?: string;
     ice_pwd?: string;
     port?: number
+}
+
+interface StunServersArray {
+    address: string;
+    family: string;
+    iface: string;
+    port: number;
+    scopeid: number;
+    stunServer:any,
+    socket: udp.Socket;
 }
 
 export default class StunServer {
@@ -19,7 +30,7 @@ export default class StunServer {
     // - Eventually in the future we can use this socket to relay data to teredo
 
     options:StunServerOptions
-    stun_servers = []
+    stun_servers:Array<StunServersArray> = []
 
     ice_remote_credentials = {
         ice_user: '',
@@ -73,7 +84,8 @@ export default class StunServer {
 
                 this.stun_servers.push({
                     ...interfaces[iface],
-                    stunServer: stunserver
+                    stunServer: stunserver,
+                    socket: socket,
                 })
             }
 
@@ -175,15 +187,27 @@ export default class StunServer {
                 stunServer.send(message, rinfo_c.port, rinfo_c.address);
 
                 // Start UDP Client?
-                console.log('Starting StreamingClient...')
                 this.onConnectionReady(socket, rinfo_c.address, rinfo_c.port)
+
+                setTimeout(() => {
+                    for(const server in this.stun_servers){
+                        // console.log(this.stun_servers[server].socket)
+
+                        if(this.stun_servers[server].stunServer._eventsCount > 0){
+                            // console.log('Eventcount is:', this.stun_servers[server].stunServer._eventsCount, 'Closing socket..')
+                            this.stun_servers[server].stunServer.close()
+                        } else {
+                            // console.log('Keeping socket alive: ', this.stun_servers[server].stunServer)
+                        }
+                    }
+                }, 5000)
             })
         }, 500)
     }
 
-    onConnectionReady(stunServer:StunServer, address:string, port:number){
+    onConnectionReady(socket:udp.Socket, address:string, port:number){
         if(this.on_connection_ready !== undefined){
-            this.on_connection_ready(stunServer, address, port)
+            this.on_connection_ready(socket, address, port)
         }
     }
 

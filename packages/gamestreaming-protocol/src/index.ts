@@ -1,8 +1,5 @@
-import UDPConnectionProbing from './packets/UDPConnectionProbing'
-import UDPKeepAlive from './packets/UDPKeepAlive'
-import URCPControl from './packets/URCPControl'
-import MuxDCTControl from './packets/MuxDCTControl'
-import MuxDCTChannel from './packets/MuxDCTChannel'
+import { PacketTypes } from './packets'
+export const PacketFormats = PacketTypes
 
 export default class GameStreamingProtocol {
 
@@ -17,13 +14,13 @@ export default class GameStreamingProtocol {
             //     return new Rtp102(payload)
             //     break;
             case rtpPayloadType == 102: // UDPConnectionProbing
-                return new UDPConnectionProbing(payload)
+                return new PacketFormats.UDPConnectionProbing(payload)
                 break;
             case rtpPayloadType == 101: // UDPKeepAlive
-                return new UDPKeepAlive(payload)
+                return new PacketFormats.UDPKeepAlive(payload)
                 break;
             case rtpPayloadType == 100: // URCPControl
-                return new URCPControl(payload)
+                return new PacketFormats.URCPControl(payload)
                 break;
             // case 99: // SecurityLayerCtrl
             //     return new Rtp97(payload)
@@ -32,18 +29,18 @@ export default class GameStreamingProtocol {
             //     return new Rtp97(payload)
             //     break;
             case rtpPayloadType == 97: // MuxDCTControl
-                return new MuxDCTControl(payload)
+                return new PacketFormats.MuxDCTControl(payload)
                 break;
             // case rtpPayloadType == 96: // BaseLinkControl
             //     return new Rtp97(payload)
             //     break;
             case rtpPayloadType <= 63 && rtpPayloadType >= 35: // MuxDCTChannel RangeEnd
-                return new MuxDCTChannel(payload, rtpPayloadType, rtpSsrc)
+                return new PacketFormats.MuxDCTChannel(payload, rtpPayloadType, rtpSsrc)
                 break;
             default:
                 this.log('src/index.ts: RTP Payload type is unknown: ' + rtpPayloadType)
                 this.log('src/index.ts: Trying to decode using MuxDCTChannel format...')
-                return new MuxDCTChannel(payload, rtpPayloadType, rtpSsrc) //, rtpPayloadType, rtpSsrc)
+                return new PacketFormats.MuxDCTChannel(payload, rtpPayloadType, rtpSsrc) //, rtpPayloadType, rtpSsrc)
                 break;
         }
     }

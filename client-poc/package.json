@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "license": "MIT",
   "scripts": {
-    "start": "DEBUG=* node dist/bin/app.js",
+    "start": "tsc --skipLibCheck && node dist/index",
+    "start_webpack": "DEBUG=* node dist/bin/app.js",
     "dev": "DEBUG=* node dist/index.js",
     "prod": "tsc --build && echo \"Creating packed binary...\" && webpack --config webpack.config.js && echo \"JS Binary created: dist/app.js\"",
     "clean": "rm -rf dist/ && rm -rf *.tsbuildinfo"

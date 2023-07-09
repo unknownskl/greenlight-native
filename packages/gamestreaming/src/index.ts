@@ -1,32 +1,39 @@
 import { Socket } from "dgram"
 import RtpPacket from 'greenlight-rtp'
-import channels from './channels'
 import Events from './events'
 
-import * as fs from 'fs'
+import CoreChannel from './channels/core'
+import ControlChannel from './channels/control'
+import GameStreamingProtocol from 'greenlight-gamestreaming-protocol'
+
+enum ChannelSsrc {
+    core = 0,
+    control = 1024
+}
+
+interface targetObject {
+    address:string;
+    port:number;
+    srtpkey:string;
+}
 export default class GameStreaming {
 
     socket:Socket
-    target
+    target:targetObject
 
-    events:Events
+    events:Events = new Events(this)
     channels = {
-        CoreChannel: undefined,
-        ControlChannel: undefined,
-        QosChannel: undefined,
-        VideoChannel: undefined,
-        AudioChannel: undefined,
-        MessagingChannel: undefined,
-        ChatAudioChannel: undefined,
-        InputChannel: undefined,
-        InputFeedbackChannel: undefined,
+        core: new CoreChannel(this),
+        control: new ControlChannel(this)
     }
+    gsProtocol = new GameStreamingProtocol()
 
     _rtpSequence = 0
     _clientSequence = 99 // Next one will be 100.
     _serverSequence = 99
     _serverSequenceChanged = false
-    _mtu = 0
+    _ms = 0
+    _referenceTimestamp = process.hrtime()
 
     constructor(socket:Socket, address:string, port:number, srtpkey:string){
         this.socket = socket
@@ -35,117 +42,88 @@ export default class GameStreaming {
             port: port,
             srtpkey: srtpkey
         }
-        this.events = new Events(this)
 
         console.log('---[ GameStreaming Client ]------------------------------------------')
         console.log('- Connecting to:', address +':'+ port)
         console.log('- Srtp key:', srtpkey)
         console.log('---[ Starting connection... ]----------------------------------------')
 
-        this.setupEvents()
-        this.startHandshake()
-    }
-
-    setupEvents(){
+        // Setup message handler
         this.socket.on('message', (msg, rinfo) => { this.onMessage(msg, rinfo) })
 
-        for(const channel in channels){
-            this.channels[channel] = new channels[channel](this)
-        }
-
-        // Events:
-        // application_qos_policy -> QOS Policy retrieved
-        // application_messaging_message -> On message
-        // application_disconnect -> on disconnect [todo]
-
-        setInterval(() => {
-            console.log('-- 1 sec interval. SRTP:', this.target.srtpkey)
-        }, 1000)
-
-        let callAmount = 0;
-        process.on('SIGINT', () => {
-            if(callAmount < 1) {
-                // this.emit('application_disconnect', {})
-                fs.writeFileSync('./video.mp4', this.channels.VideoChannel._videoBuffer.getBuffer(), { flag: 'w+' })
-
-                setTimeout(() => process.exit(0), 1000);
-            }
-        });
+        this.start()
     }
 
-    onMessage(buffer, rinfo){
-        if(buffer[1] === 0x01)
-            return
-
-        if(buffer[0] === 0x80){
-            const packet = new RtpPacket()
-            packet.load(buffer)
-            const SrtpCrypto = packet.getSrtpCrypto()
-            const crypto = new SrtpCrypto(this.target.srtpkey)
-            const payload = crypto.decrypt(packet)
-
-            this.routePacket(packet, payload, rinfo)
-
-        } else {
-            console.log('[CLIENT] Received non-gamestreaming packet:', buffer.toString('hex'))
-        }
+    exit(exitcode:number = 0){
+        process.exit(exitcode)
     }
 
-    routePacket(packet, payload, rinfo){
-        // console.log('[CLIENT] recv [ssrc='+packet.header.ssrc+', seq='+packet.header.sequence+', pt='+packet.header.payloadType+']', payload)
+    close(exitcode:number = 0){
+        this.events.close()
+    }
 
-        // // if(packet.header.sequence > this._serverSequence){
-        //     this._serverSequence = packet.header.sequence
-        //     this._serverSequenceChanged = true
-        // // }
+    onMessage(msg, rinfo){
+        // console.log(__filename+'[onMessage()] Received packet: ', msg, rinfo)
+        // console.log(msg, rinfo)
 
-        switch(packet.header.ssrc){
-            case 0:
-                this.channels.CoreChannel.route(packet, payload, rinfo)
-                break
+        const rtpPacket:RtpPacket = new RtpPacket(msg)
+        const SrtpCrypto = rtpPacket.getSrtpCrypto()
+        const crypto = new SrtpCrypto(this.target.srtpkey)
+        const decrypted_payload = crypto.decrypt(rtpPacket)
+        const gsPayload = this.gsProtocol.lookup(rtpPacket.header.payloadTypeReal, rtpPacket.header.ssrc, decrypted_payload)
 
+        // this.events.emit('protocol_message_received', {
+        //     rtp: rtpPacket,
+        //     gsPayload: gsPayload
+        // })
+
+        console.log(__filename+'[onMessage()] Received packet: ', msg, rinfo)
+
+
+        // Forward to channel
+        switch(rtpPacket.header.ssrc){
             case 1024:
-                this.channels.ControlChannel.route(packet, payload, rinfo)
-                break
-
-            case 1025:
-                this.channels.QosChannel.route(packet, payload, rinfo)
-                break
-
-            case 1026:
-                this.channels.VideoChannel.route(packet, payload, rinfo)
-                break
-
-            case 1027:
-                this.channels.AudioChannel.route(packet, payload, rinfo)
-                break
-
-            case 1028:
-                this.channels.MessagingChannel.route(packet, payload, rinfo)
-                break
-
-            case 1029:
-                this.channels.ChatAudioChannel.route(packet, payload, rinfo)
-                break
-
-            case 1030:
-                this.channels.InputChannel.route(packet, payload, rinfo)
-                break
-
-            case 1031:
-                this.channels.InputFeedbackChannel.route(packet, payload, rinfo)
-                break
+                this.channels.control.onMessage(rtpPacket, gsPayload)
+                break;
 
             default:
-                console.log('[CLIENT] Unknown SSRC channel:', packet.header.ssrc)
-                break
+                this.channels.core.onMessage(rtpPacket, gsPayload)
+                break;
         }
     }
 
-    _sessionHandshakeInterval
+    start(){
+        // We can still set integers like sequences etc here.
 
-    startHandshake(){
-        this.channels.CoreChannel.startHandshake()
+        // We assume that the application is ready and set all the starting integers etc at this point. Lets send out a handshake probe
+        this.channels.core.startHandshake()
+    }
+
+    send(decoded_payload, ssrc, payloadType, marker = 0){
+
+        if(!(decoded_payload instanceof Buffer)){
+            decoded_payload = (decoded_payload as any).toPacket()
+        }
+
+        const rtpPacket:RtpPacket = new RtpPacket()
+        rtpPacket.header.payloadType = payloadType
+        rtpPacket.header.marker = marker
+        rtpPacket.header.sequence = this._rtpSequence
+        rtpPacket.header.ssrc = ssrc
+
+        // Encrypt packet
+        const SrtpCrypto = rtpPacket.getSrtpCrypto()
+        rtpPacket.payload = decoded_payload
+        const crypto = new SrtpCrypto(this.target.srtpkey)
+        const encrypted_payload = crypto.encrypt(rtpPacket)
+        rtpPacket.payload = encrypted_payload
+
+        // Send packet
+        const packet = rtpPacket.serialize()
+        console.log(__filename+'[send()] Sending packet: ', packet)
+        this.socket.send(packet, this.target.port, this.target.address)
+
+        this._rtpSequence++
     }
 
     getClientSequence(){
@@ -170,8 +148,6 @@ export default class GameStreaming {
         return false
     }
 
-    _ms = 0
-
     getMs(absolute = false){
 
         var hrTime = process.hrtime()
@@ -185,41 +161,9 @@ export default class GameStreaming {
         }
     }
 
-    _referenceTimestamp = process.hrtime()
-
     getReferenceTimestamp(){
         const end = process.hrtime(this._referenceTimestamp);
         const elapsed = (end[0] * 1) + (end[1] / 1000);
         return end[1]
-    }
-
-    setMtu(size:number){
-        this._mtu = size
-    }
-
-    getMtu(){
-        return this._mtu
-    }
-
-    send(decoded_payload:Buffer, ssrc, payloadType, marker = 0){
-        const rtpPacket:RtpPacket = new RtpPacket()
-        rtpPacket.header.payloadType = payloadType
-        rtpPacket.header.marker = marker
-        rtpPacket.header.sequence = this._rtpSequence
-        rtpPacket.header.ssrc = ssrc
-
-        // Encrypt packet
-        const SrtpCrypto = rtpPacket.getSrtpCrypto()
-        rtpPacket.payload = decoded_payload
-        // console.log('SRTPKEY:', this.target.srtpkey)
-        const crypto = new SrtpCrypto(this.target.srtpkey)
-        const encrypted_payload = crypto.encrypt(rtpPacket)
-        rtpPacket.payload = encrypted_payload
-
-        // Send packet
-        const packet = rtpPacket.serialize()
-        this.socket.send(packet, this.target.port, this.target.address)
-
-        this._rtpSequence++
     }
 }

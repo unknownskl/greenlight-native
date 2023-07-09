@@ -8,9 +8,11 @@ export enum Types {
 export interface SynOptions {
     type:Types;
     length:number;
+    custom_binary?:Buffer
 }
 export interface AckOptions extends SynOptions {
-    custom_binary?:Buffer
+    type:Types;
+    length:number;
 }
 
 export default class UDPConnectionProbing extends Packet {
@@ -42,8 +44,8 @@ export default class UDPConnectionProbing extends Packet {
             this.type = packet.type || Types.Syn
             this.length = packet.length || 0
 
-            if((packet as AckOptions).custom_binary)
-                this.custom_binary = (packet as AckOptions).custom_binary
+            if((packet as SynOptions).custom_binary)
+                this.custom_binary = (packet as SynOptions).custom_binary
 
             if(! Object.values(Types).includes(this.type))
                 throw new Error('UDPConnectionProbing: packet.type needs to be one of: '+ Object.keys(Types).join(', '))
@@ -58,7 +60,7 @@ export default class UDPConnectionProbing extends Packet {
             if(this.custom_binary){
                 this.write('bytes', this.custom_binary)
             } else {
-                this.write('bytes', Buffer.from('00'.repeat(this.length-2), 'hex'))
+                this.write('bytes', Buffer.from('01'.repeat(this.length-2), 'hex'))
             }
 
         } else if(this.type == Types.Ack) {
