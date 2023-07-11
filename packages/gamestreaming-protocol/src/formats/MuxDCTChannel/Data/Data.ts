@@ -10,7 +10,7 @@ export interface DefaultOptions {
     data:DataDataVideoFormat
 }
 
-enum dataTypes {
+enum Types {
     Video = 1,
 }
 
@@ -27,7 +27,7 @@ export default class DataDataFormat extends Packet {
             this.unknown1 = this.read('uint16')
 
             const packetType = this.read('uint32')
-            if(packetType === dataTypes.Video){
+            if(packetType === Types.Video){
                 this.data = new DataDataVideoFormat(this.read('remainder'))
 
             } else {
@@ -48,7 +48,7 @@ export default class DataDataFormat extends Packet {
         this.write('uint16', this.unknown1)
 
         if(this.data instanceof Formats.Video){
-            this.write('uint32', dataTypes.Video)
+            this.write('uint32', Types.Video)
             this.write('bytes', this.data.toPacket())
 
         } else {

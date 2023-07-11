@@ -2,7 +2,7 @@ import Packet from '../../packet'
 import DataControlFormat from './Data/Control'
 import DataFrameFormat from './Data/Frame'
 import DataMultiMessageFormat from './Data/MultiMessage'
-import DataMessageFormat from './Data/Message'
+import DataMessageFormat, { DataTypes as DataMessageDataTypes, AckTypes as DataMessageAckTypes } from './Data/Message'
 import DataDataFormat, { Formats as DataDataFormats } from './Data/Data'
 import DataAckFormat from './Data/Ack'
 
@@ -11,6 +11,8 @@ export const Formats = {
     Frame: DataFrameFormat,
     MultiMessage: DataMultiMessageFormat,
     Message: DataMessageFormat,
+    MessageDataTypes: DataMessageDataTypes,
+    MessageAckTypes: DataMessageAckTypes,
     Data: DataDataFormat,
     DataFormats: DataDataFormats,
     Ack: DataAckFormat,

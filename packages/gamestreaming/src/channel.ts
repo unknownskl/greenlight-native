@@ -8,16 +8,12 @@ export class Channel {
         this.application = application
     }
 
-    handleOpenChannel(rtp, payload){
-        // payload.name
-        // payload.data
-
-        // console.log(payload)
+    handleOpenChannel(rtp, payload, channelData = Buffer.from('')){
 
         if(payload instanceof PacketFormats.MuxDCTControl && payload.type === PacketFormats.MuxDCTControlTypes.OpenChannel){
             this.application.sendPayload(new PacketFormats.MuxDCTControl({
                 type: PacketFormats.MuxDCTControlTypes.Confirm,
-                data: Buffer.from('0300', 'hex')
+                data: channelData
             }), rtp.header.ssrc, 97)
 
         } else {

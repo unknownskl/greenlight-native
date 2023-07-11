@@ -16,9 +16,9 @@ export default class Events extends EventEmitter {
             console.log('-- 1 sec interval. SRTP:', this.application.target.srtpkey)
         }, 1000)
 
-        setInterval(() => {
-            console.log('App class: ', this.application)
-        }, 1000)
+        // setInterval(() => {
+        //     console.log('App class: ', this.application)
+        // }, 1000)
 
         // Exit handler
         let callAmount = 0;
@@ -29,8 +29,6 @@ export default class Events extends EventEmitter {
                 
                 // this.emit('application_disconnect', {})
                 // fs.writeFileSync('./video.mp4', this.channels.VideoChannel._videoBuffer.getBuffer(), { flag: 'w+' })
-
-                setTimeout(() => this.application.exit(0), 1000);
             }
         });
     }

@@ -11,13 +11,6 @@ export default class CoreChannel extends Channel {
     _mtu = 0
 
     startHandshake(){
-        const packetData = new PacketFormats.UDPConnectionProbing({
-            type: PacketFormats.UDPConnectionProbingTypes.Syn,
-            length: 1024
-        })
-
-        console.log(packetData)
-
         console.log('[CORE] Starting UDP MTU handshake')
 
         let mtuSize = 1436+16
@@ -35,14 +28,14 @@ export default class CoreChannel extends Channel {
             }
         }, 10)
 
-        // Core ACK messages
+        // Sequence confirm ACK messages (no-data)
         this._sessionConfirmInterval = setInterval(() => {
             if(this.application._serverSequenceChanged === true){
                 console.log('send ack:', this.application.getMs(true), 'ms:', this.application.getMs())
 
                 const dummy = new DCTPacket(Buffer.from('0000', 'hex'))
                 this.application.send(dummy.packHeader(Buffer.from('0000', 'hex'), {
-                    sequence: this.application.getClientSequence(),
+                    // sequence: this.application.getClientSequence(),
                     confirm: this.application.getServerSequence(),
                     timestamp: this.application.getMs()
                 }), 0, 35)
@@ -76,6 +69,10 @@ export default class CoreChannel extends Channel {
                     type: PacketFormats.UDPKeepAliveTypes.ConfigAck,
                     header: 40,
                 }), 0, 101)
+            
+            } else if(payload.type === PacketFormats.UDPKeepAliveTypes.Disconnect){
+                console.log('Received disconnect from console. Exiting client...')
+                this.application.close(1)
             }
 
         } else if(payload.type === PacketFormats.URCPControlTypes.Config){
@@ -85,6 +82,8 @@ export default class CoreChannel extends Channel {
 
             console.log(__filename+'[onMessage()] Core channel negotiation finished')
 
+        } else {
+            // console.log(__filename+'[onMessage()]: [core] Unknown packet to process: ', payload)
         }
 
     }

@@ -4,6 +4,14 @@ import Events from './events'
 
 import CoreChannel from './channels/core'
 import ControlChannel from './channels/control'
+import QosChannel from './channels/qos'
+import VideoChannel from './channels/video'
+import AudioChannel from './channels/audio'
+import MessagingChannel from './channels/messaging'
+import ChatAudioChannel from './channels/audio'
+import InputChannel from './channels/audio'
+import InputFeedbackChannel from './channels/audio'
+
 import GameStreamingProtocol from 'greenlight-gamestreaming-protocol'
 import MuxDCTChannel from 'greenlight-gamestreaming-protocol/dist/packets/MuxDCTChannel'
 
@@ -25,7 +33,14 @@ export default class GameStreaming {
     events:Events = new Events(this)
     channels = {
         core: new CoreChannel(this),
-        control: new ControlChannel(this)
+        control: new ControlChannel(this),
+        qos: new QosChannel(this),
+        video: new VideoChannel(this),
+        audio: new AudioChannel(this),
+        messaging: new MessagingChannel(this),
+        chataudio: new ChatAudioChannel(this),
+        input: new InputChannel(this),
+        inputfeedback: new InputFeedbackChannel(this),
     }
     gsProtocol = new GameStreamingProtocol()
 
@@ -61,6 +76,8 @@ export default class GameStreaming {
 
     close(exitcode:number = 0){
         this.events.close()
+
+        setTimeout(() => this.exit(exitcode), 1000);
     }
 
     onMessage(msg, rinfo){
@@ -78,7 +95,7 @@ export default class GameStreaming {
         //     gsPayload: gsPayload
         // })
 
-        console.log(__filename+'[onMessage()] Received packet: ', msg, rinfo)
+        // console.log(__filename+'[onMessage()] Received packet: ['+rtpPacket.header.ssrc+']', gsPayload)
 
         if((gsPayload as MuxDCTChannel)._headers && (gsPayload as MuxDCTChannel)._headers.sequence && (gsPayload as MuxDCTChannel)._headers.sequence > this._serverSequence){
             this.setServerSequence((gsPayload as MuxDCTChannel)._headers.sequence)
@@ -88,6 +105,34 @@ export default class GameStreaming {
         switch(rtpPacket.header.ssrc){
             case 1024:
                 this.channels.control.onMessage(rtpPacket, gsPayload)
+                break;
+
+            case 1025:
+                this.channels.qos.onMessage(rtpPacket, gsPayload)
+                break;
+
+            case 1026:
+                this.channels.video.onMessage(rtpPacket, gsPayload)
+                break;
+
+            case 1027:
+                this.channels.audio.onMessage(rtpPacket, gsPayload)
+                break;
+
+            case 1028:
+                this.channels.messaging.onMessage(rtpPacket, gsPayload)
+                break;
+
+            case 1029:
+                this.channels.chataudio.onMessage(rtpPacket, gsPayload)
+                break;
+
+            case 1030:
+                this.channels.input.onMessage(rtpPacket, gsPayload)
+                break;
+
+            case 1031:
+                this.channels.inputfeedback.onMessage(rtpPacket, gsPayload)
                 break;
 
             default:
@@ -106,7 +151,8 @@ export default class GameStreaming {
     sendPayload(payload, ssrc, payloadType, marker = 0){
         payload = payload.packHeader(payload.toPacket(), {
             confirm: this.getServerSequence(),
-            sequence: this.getClientSequence()
+            sequence: this.getClientSequence(),
+            timestamp: this.getMs()/1000,
         })
 
         this.send(payload, ssrc, payloadType, marker)
@@ -133,7 +179,7 @@ export default class GameStreaming {
 
         // Send packet
         const packet = rtpPacket.serialize()
-        console.log(__filename+'[send()] Sending packet: ', packet)
+        // console.log(__filename+'[send()] Sending packet: ', packet)
         this.socket.send(packet, this.target.port, this.target.address)
 
         this._rtpSequence++
@@ -176,7 +222,7 @@ export default class GameStreaming {
 
     getReferenceTimestamp(){
         const end = process.hrtime(this._referenceTimestamp);
-        const elapsed = (end[0] * 1) + (end[1] / 1000);
-        return end[1]
+        const elapsed = (end[0] * 1) // + (end[1] / 1000);
+        return end[1]/1000
     }
 }
