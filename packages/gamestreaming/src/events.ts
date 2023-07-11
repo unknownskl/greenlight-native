@@ -34,6 +34,7 @@ export default class Events extends EventEmitter {
     }
 
     close(){
+        this.emit('app_quit', {})
         clearInterval(this.srtpInterval)
     }
 }
