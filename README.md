@@ -25,17 +25,13 @@ After changing the above you can compile the script to a packed js file and run 
 | Folder | Description |
 |--------|-------------|
 | client-poc | CLI App which interacts with the libraries. |
+| client-pcap | Simple PCAP reader. (very bare) |
 | packages/gamestreaming | Actual game streaming logic |
+| packages/gamestreaming-protocol | Library for reading and writing nano packets |
 | packages/rtp | Code for reading and creating RTP Packets |
 | packages/stun | Wrapper for node stun lib including fetching active interfaces |
 | packages/teredo | Teredo library for routing data over Teredo (Not working/dummy package) |
 | packages/xcloud | Holds the xcloud library (API client) |
-
-| Folder | Description |
-|--------|-------------|
-| packages/gamestreaming/src/channels | Channel logic |
-| packages/gamestreaming/src/lib | Contains helpers |
-| packages/gamestreaming/src/packets | Packet formats, note though that this is not the ideal way. The packets have a certain format based on the RTP payload type. (Needs refactor) |
 
 ## FAQ
 
