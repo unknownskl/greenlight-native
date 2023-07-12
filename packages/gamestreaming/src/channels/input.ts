@@ -1,4 +1,5 @@
 import GameStreamingProtocol, { PacketFormats } from 'greenlight-gamestreaming-protocol'
+import Gamepad from '../helpers/gamepad'
 import { Channel } from '../channel'
 
 export default class InputChannel extends Channel {
@@ -23,7 +24,7 @@ export default class InputChannel extends Channel {
                         data: new PacketFormats.MuxDCTChannelFormats.FrameFormats.Input({
                             frameId: this.getFrameId(),
                             relativeTimestamp: this.application.getReferenceTimestamp(),
-                            stats_data: new PacketFormats.MuxDCTChannelFormats.FrameFormats.InputFormats.Stats({})
+                            stats_data: new PacketFormats.MuxDCTChannelFormats.FrameFormats.InputFormats.Stats({ })
                         })
                     })
                 }, 35, 1030), 1030, 35)
@@ -51,23 +52,6 @@ export default class InputChannel extends Channel {
 
             this._frameIntervalActive = true
             console.log(__filename+'[onMessage()] Input channel opened')
-
-        // } else if(payload instanceof PacketFormats.MuxDCTChannel && payload.type === PacketFormats.MuxDCTChannelTypes.Data && payload.data.data instanceof PacketFormats.MuxDCTChannelFormats.DataFormats.MultiMessage){
-        //     if(this._messageParts[payload.data.data.totalSize] === undefined){
-        //         this._messageParts[payload.data.data.totalSize] = {
-        //             totalSize: payload.data.data.totalSize,
-        //             data: Buffer.alloc(payload.data.data.totalSize),
-        //             writtenBytes: 0
-        //         }
-        //     }
-
-        //     const bytesWrote = (payload.data.data.data as Buffer).copy(this._messageParts[payload.data.data.totalSize].data, payload.data.data.dataOffset)
-        //     this._messageParts[payload.data.data.totalSize].writtenBytes += bytesWrote
-
-        //     if(this._messageParts[payload.data.data.totalSize].writtenBytes >= payload.data.data.totalSize){
-        //         this._qosPolicy = JSON.parse(this._messageParts[payload.data.data.totalSize].data.slice(0, -1).toString())
-        //         console.log(__filename+'[onMessage()]: [qos] Received policy:', this._qosPolicy)
-        //     }
 
         } else {
             // console.log(__filename+'[onMessage()]: [input] Unknown packet to process: ', payload)

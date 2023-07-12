@@ -97,6 +97,12 @@ export default class DCTPacket extends Packet {
             } else if(headerFlags === 130){
                 header.delayTimestamp = this.read('uint24')
 
+            } else if(headerFlags === 131){
+                header.delayTimestamp = this.read('uint32')
+
+            } else if(headerFlags === 132){
+                header.delayTimestamp = this.read('bytes', 5)
+
             // } else if(headerFlags === 57){
             //     header.headerBytes = this.read('bytes', 3)
 

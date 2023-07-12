@@ -101,14 +101,15 @@ export default class VideoChannel extends Channel {
             if(! this.multiFrameBuffer[payload.frameId]){
                 this.multiFrameBuffer[payload.frameId] = {
                     data: Buffer.alloc(payload.totalSize, Buffer.from('00', 'hex')),
-                    metadata: '',
+                    metadata: Buffer.from(''),
                     size: payload.totalSize,
                     bytesWrote: 0
                 }
             }
 
             payload.metadata.copy(this.multiFrameBuffer[payload.frameId].data, 0)
-            payload.data.copy(this.multiFrameBuffer[payload.frameId].data, payload.metadata.length+payload.dataOffset)
+            const dataOffset = (payload.dataOffset === 0) ? 9 : payload.dataOffset
+            payload.data.copy(this.multiFrameBuffer[payload.frameId].data, dataOffset)
             this.multiFrameBuffer[payload.frameId].bytesWrote = this.multiFrameBuffer[payload.frameId].bytesWrote+payload.data.length
             
             if(payload.metadata.length > 0){
