@@ -5,6 +5,7 @@ export const Formats = {
 
 export interface DefaultOptions {
     unknown1?:number
+    sequence?:number
     unknown2?:number
     unknown3?:number
     unknown4?:number
@@ -13,6 +14,7 @@ export interface DefaultOptions {
 
 export default class FrameInputStatsFormat extends Packet {
     unknown1:number
+    sequence:number
     unknown2:number
     unknown3:number
     unknown4:number
@@ -24,7 +26,8 @@ export default class FrameInputStatsFormat extends Packet {
         if(packet instanceof Buffer){
             this.setPacket(packet)
 
-            this.unknown1 = this.read('uint32')
+            this.unknown1 = this.read('uint16')
+            this.sequence = this.read('uint16')
             this.unknown2 = this.read('uint32')
             this.unknown3 = this.read('uint32')
             this.unknown4 = this.read('uint32')
@@ -34,10 +37,11 @@ export default class FrameInputStatsFormat extends Packet {
 
         } else {
             this.unknown1 = packet.unknown1 || 0
-            this.unknown2 = packet.unknown2 || 0
-            this.unknown3 = packet.unknown3 || 0
-            this.unknown4 = packet.unknown4 || 0
-            this.unknown5 = packet.unknown5 || 0
+            this.sequence = packet.sequence || 1
+            this.unknown2 = packet.unknown2 || 2
+            this.unknown3 = packet.unknown3 || 8
+            this.unknown4 = packet.unknown4 || 799
+            this.unknown5 = packet.unknown5 || 836
         }
     }
 

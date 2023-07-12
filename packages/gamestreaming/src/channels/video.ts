@@ -5,6 +5,7 @@ import * as fs from 'fs'
 export default class VideoChannel extends Channel {
 
     _messageParts = {}
+    _sequence = 0
     _qosPolicy = {}
 
     constructor(application){
@@ -29,6 +30,8 @@ export default class VideoChannel extends Channel {
             this.handleOpenChannel(rtp, payload)
         
         } else if(payload instanceof PacketFormats.MuxDCTChannel && payload.type === PacketFormats.MuxDCTChannelTypes.Config && payload.data.data instanceof PacketFormats.MuxDCTChannelFormats.ConfigFormats.VideoServer){
+            this.application.channels.control.sendChannelsReady()
+            
             this.application.sendPayload(new PacketFormats.MuxDCTChannel({
                 type: PacketFormats.MuxDCTChannelTypes.Config,
                 data: new PacketFormats.MuxDCTChannelFormats.Config({
@@ -59,6 +62,30 @@ export default class VideoChannel extends Channel {
         } else {
             console.log(__filename+'[onMessage()]: [video] Unknown packet to process: ', payload)
         }
+    }
+
+    getSequence(){
+        this._sequence++;
+        return this._sequence;
+    }
+
+    ackFrame(frameId) {
+        console.log('Get ms:', this.application.getReferenceTimestamp()/1000)
+        const sequence = this.getSequence()
+        this.application.sendPayload(new PacketFormats.MuxDCTChannel({
+            type: PacketFormats.MuxDCTChannelTypes.Data,
+            sequence: sequence,
+            nextSequence: sequence+1,
+            data: new PacketFormats.MuxDCTChannelFormats.Data({
+                data: new PacketFormats.MuxDCTChannelFormats.DataFormats.Data({
+                    data: new PacketFormats.MuxDCTChannelFormats.DataFormats.DataFormats.Video({
+                        frameId: frameId,
+                        relativeTimestamp: this.application.getReferenceTimestamp()/1000,
+                        unknown1: 0,
+                    })
+                })
+            })
+        }, 35, 1026), 1026, 35)
     }
 
     // Video Dumper
@@ -93,6 +120,7 @@ export default class VideoChannel extends Channel {
 
                 if(this.collectVideoData === false && payload.unknown2 > 5){
                     this.collectVideoData = true
+                    this.application.channels.core.sendChannelsReady()
                     // this.videoFrameBuffer = []
                 }
 
@@ -101,6 +129,8 @@ export default class VideoChannel extends Channel {
                     data: Buffer.concat([this.multiFrameBuffer[payload.frameId].data])
                 }
                 delete this.multiFrameBuffer[payload.frameId]
+
+                this.ackFrame(payload.frameId)
             }
         } else {
             if(this.collectVideoData === true){
@@ -108,6 +138,7 @@ export default class VideoChannel extends Channel {
                     metadata: payload.metadata,
                     data: Buffer.concat([payload.metadata, payload.data])
                 }
+                this.ackFrame(payload.frameId)
             }
         }
     }

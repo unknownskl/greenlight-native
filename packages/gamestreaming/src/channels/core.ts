@@ -73,9 +73,19 @@ export default class CoreChannel extends Channel {
             } else if(payload.type === PacketFormats.UDPKeepAliveTypes.Disconnect){
                 console.log('Received disconnect from console. Exiting client...')
                 this.application.close(1)
+
+            } else if(payload.type === PacketFormats.UDPKeepAliveTypes.None){
+                console.log(__filename+'[onMessage()] Core ping:', payload)
+                const packet = new PacketFormats.UDPKeepAlive({
+                    type: PacketFormats.UDPKeepAliveTypes.None,
+                    header: 1382,
+                }).toPacket()
+                const newBuffer = Buffer.alloc(this._mtu)
+                packet.copy(newBuffer, 0)
+                this.application.send(newBuffer, 0, 101)
             }
 
-        } else if(payload.type === PacketFormats.URCPControlTypes.Config){
+        } else if(payload instanceof PacketFormats.URCPControl && payload.type === PacketFormats.URCPControlTypes.Config){
             this.application.send(new PacketFormats.URCPControl({
                 type: PacketFormats.URCPControlTypes.Accepted,
             }), 0, 100)
@@ -86,6 +96,20 @@ export default class CoreChannel extends Channel {
             // console.log(__filename+'[onMessage()]: [core] Unknown packet to process: ', payload)
         }
 
+    }
+
+    sendChannelsReady(){
+        this.application.send(new PacketFormats.UDPKeepAlive({
+            type: PacketFormats.UDPKeepAliveTypes.None,
+            header: 1362,
+        }), 0, 101)
+
+        this.application.send(new PacketFormats.UDPKeepAlive({
+            type: PacketFormats.UDPKeepAliveTypes.None,
+            header: 288,
+        }), 0, 101)
+
+        console.log(__filename+'[onMessage()] All channels are ready. Preparing Input channels...')
     }
     
 }

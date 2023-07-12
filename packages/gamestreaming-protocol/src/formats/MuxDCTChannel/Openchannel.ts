@@ -1,13 +1,14 @@
 import Packet from '../../packet'
 import HandshakeRequestFormat from './Handshake/Request'
 import HandshakeResponseFormat from './Handshake/Response'
-import HandshakeAudioFormat from './Handshake/Audio'
-import HandshakeAudioAckFormat, { Formats as HandshakeAudioAckFormats } from './Handshake/AudioAck'
+import HandshakeAudioFormat, { AudioType as HandshakeAudioTypes } from './Handshake/Audio'
+import HandshakeAudioAckFormat, { Formats as HandshakeAudioAckFormats, Types as HandshakeAudioAckTypes } from './Handshake/AudioAck'
 
 export const Formats = {
     Request: HandshakeRequestFormat,
     Response: HandshakeResponseFormat,
     Audio: HandshakeAudioFormat,
+    AudioTypes: HandshakeAudioTypes,
     AudioAck: HandshakeAudioAckFormat,
     AudioAckFormats: HandshakeAudioAckFormats,
 }

@@ -41,4 +41,19 @@ export default class ControlChannel extends Channel {
             // console.log(__filename+'[onMessage()]: [control] Unknown packet to process: ', payload)
         }
     }
+
+    sendChannelsReady(){
+        this.application.sendPayload(new PacketFormats.MuxDCTChannel({
+            type: PacketFormats.MuxDCTChannelTypes.Data,
+            sequence: 1,
+            nextSequence: 2,
+            data: new PacketFormats.MuxDCTChannelFormats.Data({
+                data: new PacketFormats.MuxDCTChannelFormats.DataFormats.Frame({ 
+                    isEmpty: 1
+                })
+            })
+        }, 35, 1024), 1024, 35)
+
+        console.log(__filename+'[onMessage()] All channels are ready. Preparing Input channels...')
+    }
 }

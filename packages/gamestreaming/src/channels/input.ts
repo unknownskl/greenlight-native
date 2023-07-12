@@ -4,8 +4,32 @@ import { Channel } from '../channel'
 export default class InputChannel extends Channel {
 
     _messageParts = {}
-
     _qosPolicy = {}
+
+    _frameId = 0
+    _sequence = 0
+
+    _frameInterval
+    _frameIntervalActive = false
+
+    constructor(application){
+        super(application)
+
+        this._frameInterval = setInterval(() => {
+            if(this._frameIntervalActive === true){
+                this.application.sendPayload(new PacketFormats.MuxDCTChannel({
+                    type: PacketFormats.MuxDCTChannelTypes.Frame,
+                    data: new PacketFormats.MuxDCTChannelFormats.Frame({
+                        data: new PacketFormats.MuxDCTChannelFormats.FrameFormats.Input({
+                            frameId: this.getFrameId(),
+                            relativeTimestamp: this.application.getReferenceTimestamp(),
+                            stats_data: new PacketFormats.MuxDCTChannelFormats.FrameFormats.InputFormats.Stats({})
+                        })
+                    })
+                }, 35, 1030), 1030, 35)
+            }
+        }, 12)
+    }
 
     onMessage(rtp, payload){
 
@@ -13,18 +37,20 @@ export default class InputChannel extends Channel {
             console.log(__filename+'[onMessage()] Console requested to open Input channel')
             this.handleOpenChannel(rtp, payload)
         
-        // } else if(payload instanceof PacketFormats.MuxDCTChannel && payload.type === PacketFormats.MuxDCTChannelTypes.OpenChannel && payload.data instanceof PacketFormats.MuxDCTChannelFormats.OpenChannel){
-        //     this.application.sendPayload(new PacketFormats.MuxDCTChannel({
-        //         type: PacketFormats.MuxDCTChannelTypes.OpenChannel,
-        //         nextSequence: 1,
-        //         data: new PacketFormats.MuxDCTChannelFormats.OpenChannel({
-        //             data: new PacketFormats.MuxDCTChannelFormats.OpenChannelFormats.Response({
-        //                 unknown1: 0
-        //             })
-        //         })
-        //     }, 37, rtp.header.ssrc), rtp.header.ssrc, 37)
+        } else if(payload instanceof PacketFormats.MuxDCTChannel && payload.type === PacketFormats.MuxDCTChannelTypes.Config && payload.data.data instanceof PacketFormats.MuxDCTChannelFormats.ConfigFormats.Input){
+            this._frameId = payload.data.data.frameId
 
-        //     console.log(__filename+'[onMessage()] Control channel opened')
+            this.application.sendPayload(new PacketFormats.MuxDCTChannel({
+                type: PacketFormats.MuxDCTChannelTypes.Config,
+                data: new PacketFormats.MuxDCTChannelFormats.Config({
+                    data: new PacketFormats.MuxDCTChannelFormats.ConfigFormats.InputAck({
+                        relativeTimestamp: this.application.getReferenceTimestamp()
+                    })
+                })
+            }, 35, rtp.header.ssrc), rtp.header.ssrc, 35)
+
+            this._frameIntervalActive = true
+            console.log(__filename+'[onMessage()] Input channel opened')
 
         // } else if(payload instanceof PacketFormats.MuxDCTChannel && payload.type === PacketFormats.MuxDCTChannelTypes.Data && payload.data.data instanceof PacketFormats.MuxDCTChannelFormats.DataFormats.MultiMessage){
         //     if(this._messageParts[payload.data.data.totalSize] === undefined){
@@ -44,7 +70,17 @@ export default class InputChannel extends Channel {
         //     }
 
         } else {
-            console.log(__filename+'[onMessage()]: [input] Unknown packet to process: ', payload)
+            // console.log(__filename+'[onMessage()]: [input] Unknown packet to process: ', payload)
         }
+    }
+
+    getSequence(){
+        this._sequence++;
+        return this._sequence;
+    }
+
+    getFrameId(){
+        this._frameId++;
+        return this._frameId;
     }
 }

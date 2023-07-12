@@ -6,7 +6,7 @@ export enum AudioType {
 }
 
 export interface DefaultOptions {
-    relativeTimestamp?:number
+    relativeTimestamp:number
     rate?:number
     unknown1?:number
     unknown2?:number

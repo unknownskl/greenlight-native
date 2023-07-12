@@ -8,9 +8,9 @@ import QosChannel from './channels/qos'
 import VideoChannel from './channels/video'
 import AudioChannel from './channels/audio'
 import MessagingChannel from './channels/messaging'
-import ChatAudioChannel from './channels/audio'
-import InputChannel from './channels/audio'
-import InputFeedbackChannel from './channels/audio'
+import ChatAudioChannel from './channels/chataudio'
+import InputChannel from './channels/input'
+import InputFeedbackChannel from './channels/inputfeedback'
 
 import GameStreamingProtocol from 'greenlight-gamestreaming-protocol'
 import MuxDCTChannel from 'greenlight-gamestreaming-protocol/dist/packets/MuxDCTChannel'
@@ -49,7 +49,7 @@ export default class GameStreaming {
     _serverSequence = 99
     _serverSequenceChanged = false
     _ms = 0
-    _referenceTimestamp = process.hrtime()
+    _referenceTimestamp = process.hrtime.bigint()
 
     constructor(socket:Socket, address:string, port:number, srtpkey:string){
         this.socket = socket
@@ -220,9 +220,11 @@ export default class GameStreaming {
         }
     }
 
-    getReferenceTimestamp(){
-        const end = process.hrtime(this._referenceTimestamp);
-        const elapsed = (end[0] * 1) // + (end[1] / 1000);
-        return end[1]/1000
+    getReferenceTimestamp():number{
+        // const end = process.hrtime.bigint()-this._referenceTimestamp;
+        // return (end[0] * 1000000 + end[1] / 1000)*1000
+        const end = process.hrtime.bigint()-this._referenceTimestamp;
+        const ns = end.toString()
+        return Math.ceil(parseInt(ns)/1000)
     }
 }

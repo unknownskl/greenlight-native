@@ -12,6 +12,16 @@ export default class ChatAudioChannel extends Channel {
         if(payload instanceof PacketFormats.MuxDCTControl && payload.type === PacketFormats.MuxDCTControlTypes.OpenChannel){
             console.log(__filename+'[onMessage()] Console requested to open ChatAudio channel')
             this.handleOpenChannel(rtp, payload)
+
+            this.application.sendPayload(new PacketFormats.MuxDCTChannel({
+                type: PacketFormats.MuxDCTChannelTypes.OpenChannel,
+                data: new PacketFormats.MuxDCTChannelFormats.OpenChannel({
+                    data: new PacketFormats.MuxDCTChannelFormats.OpenChannelFormats.Audio({
+                        audioType: PacketFormats.MuxDCTChannelFormats.OpenChannelFormats.AudioTypes.ChatAudio,
+                        relativeTimestamp: this.application.getReferenceTimestamp()
+                    })
+                })
+            }, 36, rtp.header.ssrc), rtp.header.ssrc, 36)
         
         // } else if(payload instanceof PacketFormats.MuxDCTChannel && payload.type === PacketFormats.MuxDCTChannelTypes.OpenChannel && payload.data instanceof PacketFormats.MuxDCTChannelFormats.OpenChannel){
         //     this.application.sendPayload(new PacketFormats.MuxDCTChannel({

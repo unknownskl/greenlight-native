@@ -41,6 +41,14 @@ export default class QosChannel extends Channel {
             if(this._messageParts[payload.data.data.totalSize].writtenBytes >= payload.data.data.totalSize){
                 this._qosPolicy = JSON.parse(this._messageParts[payload.data.data.totalSize].data.slice(0, -1).toString())
                 console.log(__filename+'[onMessage()]: [qos] Received policy:', this._qosPolicy)
+
+                this.application.sendPayload(new PacketFormats.MuxDCTChannel({
+                    type: PacketFormats.MuxDCTChannelTypes.Data,
+                    nextSequence: 1,
+                    data: new PacketFormats.MuxDCTChannelFormats.Data({
+                        data: new PacketFormats.MuxDCTChannelFormats.DataFormats.MultiMessage({ })
+                    })
+                }, 41, rtp.header.ssrc), rtp.header.ssrc, 41)
             }
 
         } else {
