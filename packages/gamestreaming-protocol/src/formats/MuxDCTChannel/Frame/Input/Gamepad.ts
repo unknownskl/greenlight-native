@@ -41,18 +41,12 @@ export interface GamepadValues {
 
 export interface DefaultOptions {
     unknown1?:number
-    unknown2?:number
-    frameId:number
-    relativeTimestamp:number
     sequence:GamepadButtons
     value:GamepadValues
 }
 
 export default class FrameInputGamepadFormat extends Packet {
     unknown1:number
-    unknown2:number
-    frameId:number
-    relativeTimestamp:number
     sequence:GamepadButtons
     value:GamepadValues
 
@@ -112,7 +106,39 @@ export default class FrameInputGamepadFormat extends Packet {
     toPacket() {
         this.setPacket(Buffer.allocUnsafe(2048))
 
-        // this.write('uint32', 39)
+        this.write('uint8', this.unknown1)
+
+        this.write('uint8', this.sequence.dpad_up)
+        this.write('uint8', this.sequence.dpad_down)
+        this.write('uint8', this.sequence.dpad_left)
+        this.write('uint8', this.sequence.dpad_right)
+        this.write('uint8', this.sequence.start)
+        this.write('uint8', this.sequence.select)
+        this.write('uint8', this.sequence.thumbstick_left)
+        this.write('uint8', this.sequence.thumbstick_right)
+        this.write('uint8', this.sequence.bumper_left)
+        this.write('uint8', this.sequence.bumper_right)
+        this.write('uint8', this.sequence.unknown1)
+        this.write('uint8', this.sequence.unknown2)
+        this.write('uint8', this.sequence.a)
+        this.write('uint8', this.sequence.b)
+        this.write('uint8', this.sequence.x)
+        this.write('uint8', this.sequence.y)
+
+        this.write('uint8', this.value.trigger_left)
+        this.write('uint8', this.value.trigger_right)
+        this.write('uint16', this.value.axis_left_x)
+        this.write('uint16', this.value.axis_left_y)
+        this.write('uint16', this.value.axis_right_x)
+        this.write('uint16', this.value.axis_right_y)
+        this.write('uint16', this.value.unknown1)
+        this.write('uint16', this.value.unknown2)
+        this.write('uint16', this.value.unknown3)
+        this.write('uint16', this.value.unknown4)
+        this.write('uint16', this.value.buttonmask)
+        this.write('uint16', this.value.axesmask)
+        this.write('uint16', this.value.unknown5)
+        this.write('uint16', this.value.unknown6)
 
         return this.getPacket().slice(0, this.getOffset())
     }

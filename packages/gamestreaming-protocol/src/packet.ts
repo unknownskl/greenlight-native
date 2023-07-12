@@ -44,6 +44,7 @@ export default class Packet {
 
     setPacket(packet:Buffer){
         this._packet = packet
+        this._offset = 0
     }
 
     getPacket(){

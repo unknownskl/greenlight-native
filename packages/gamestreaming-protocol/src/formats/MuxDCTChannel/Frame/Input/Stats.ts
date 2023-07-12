@@ -48,7 +48,8 @@ export default class FrameInputStatsFormat extends Packet {
     toPacket() {
         this.setPacket(Buffer.allocUnsafe(2048))
 
-        this.write('uint32', this.unknown1)
+        this.write('uint16', this.unknown1)
+        this.write('uint16', this.sequence)
         this.write('uint32', this.unknown2)
         this.write('uint32', this.unknown3)
         this.write('uint32', this.unknown4)

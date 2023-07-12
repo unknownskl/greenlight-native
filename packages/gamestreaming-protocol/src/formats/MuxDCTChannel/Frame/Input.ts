@@ -48,11 +48,11 @@ export default class FrameInputFormat extends Packet {
             }
             this.unknown2 = this.read('uint16')
             
-            if(gamepadFrames == 0 && this.unknown2 == 1){
-                this.unknown3 = this.read('uint16')
-                this.unknown4 = this.read('uint32')
-                this.unknown5 = this.read('uint32')
-            }
+            // if(gamepadFrames == 0 && this.unknown2 == 1){
+            //     this.unknown3 = this.read('uint16')
+            //     this.unknown4 = this.read('uint32')
+            //     this.unknown5 = this.read('uint32')
+            // }
 
             this.checkReadAllBytes(this)
 
@@ -70,12 +70,11 @@ export default class FrameInputFormat extends Packet {
     toPacket() {
         this.setPacket(Buffer.allocUnsafe(2048))
 
-        this.write('uint32', 39)
+        this.write('uint32', 19+((this.gamepad_data !== undefined) ? this.gamepad_data.toPacket().length : 0)+((this.stats_data !== undefined) ? this.stats_data.toPacket().length : 0))
         this.write('uint32', this.frameId)
         this.write('long', this.relativeTimestamp)
         this.write('uint16', this.unknown1)
         
-        console.log(this.gamepad_data)
         if(this.gamepad_data !== undefined){
             this.write('uint16', 1)
             this.write('bytes', this.gamepad_data.toPacket())

@@ -1124,7 +1124,8 @@ describe('MuxDCTChannel', function () {
             assert.equal(((packet.gs_payload as MuxDCTChannel).data.data instanceof Formats.FrameFormats.Input), true)
             assert.equal((packet.gs_payload as MuxDCTChannel).data.data.frameId, 2976380527)
             assert.equal((packet.gs_payload as MuxDCTChannel).data.data.relativeTimestamp, 212915914679)
-            assert.equal((packet.gs_payload as MuxDCTChannel).data.data.stats_data.unknown1, 789502)
+            assert.equal((packet.gs_payload as MuxDCTChannel).data.data.stats_data.unknown1, 3070)
+            assert.equal((packet.gs_payload as MuxDCTChannel).data.data.stats_data.sequence, 12)
             assert.equal((packet.gs_payload as MuxDCTChannel).data.data.stats_data.unknown5, 147)
         });
 
@@ -1139,7 +1140,8 @@ describe('MuxDCTChannel', function () {
                         frameId: 2976380527,
                         relativeTimestamp: 212915914679,
                         stats_data: new Formats.FrameFormats.InputFormats.Stats({
-                            unknown1: 789502,
+                            unknown1: 3070,
+                            sequence: 12,
                             unknown2: 62,
                             unknown3: 1,
                             unknown4: 79,
@@ -1156,44 +1158,114 @@ describe('MuxDCTChannel', function () {
             const data = fs.readFileSync('tests/data/MuxDCTChannel/Frame/Input_Gamepad.bin')
             const packet = loadPacket(data)
 
-            console.log((packet.gs_payload as MuxDCTChannel).data.data)
-
             assert.equal((packet.gs_payload instanceof MuxDCTChannel), true)
             assert.equal((packet.gs_payload as MuxDCTChannel).type, Types.Frame)
             assert.equal((packet.gs_payload as MuxDCTChannel).sequence, 0)
-            // assert.equal((packet.gs_payload as MuxDCTChannel).nextSequence, 9)
+            assert.equal((packet.gs_payload as MuxDCTChannel).nextSequence, 2058)
 
-            // assert.equal(((packet.gs_payload as MuxDCTChannel).data instanceof Formats.Frame), true)
-            // assert.equal(((packet.gs_payload as MuxDCTChannel).data.data instanceof Formats.FrameFormats.Input), true)
-            // assert.equal((packet.gs_payload as MuxDCTChannel).data.data.frameId, 2976380527)
-            // assert.equal((packet.gs_payload as MuxDCTChannel).data.data.relativeTimestamp, 212915914679)
-            // assert.equal((packet.gs_payload as MuxDCTChannel).data.data.stats_data.unknown1, 789502)
-            // assert.equal((packet.gs_payload as MuxDCTChannel).data.data.stats_data.unknown5, 147)
+            assert.equal(((packet.gs_payload as MuxDCTChannel).data instanceof Formats.Frame), true)
+            assert.equal(((packet.gs_payload as MuxDCTChannel).data.data instanceof Formats.FrameFormats.Input), true)
+            assert.equal((packet.gs_payload as MuxDCTChannel).data.data.frameId, 3607614472)
+            assert.equal((packet.gs_payload as MuxDCTChannel).data.data.relativeTimestamp, 633004950)
+
+            assert.equal((packet.gs_payload as MuxDCTChannel).data.data.stats_data.unknown1, 30405)
+            assert.equal((packet.gs_payload as MuxDCTChannel).data.data.stats_data.sequence, 5954)
+            assert.equal((packet.gs_payload as MuxDCTChannel).data.data.stats_data.unknown5, 655)
+
+            assert.equal((packet.gs_payload as MuxDCTChannel).data.data.gamepad_data.sequence.dpad_up, 4)
+            assert.equal((packet.gs_payload as MuxDCTChannel).data.data.gamepad_data.sequence.dpad_down, 4)
+            assert.equal((packet.gs_payload as MuxDCTChannel).data.data.gamepad_data.sequence.dpad_left, 4)
+            assert.equal((packet.gs_payload as MuxDCTChannel).data.data.gamepad_data.sequence.dpad_right, 4)
+            assert.equal((packet.gs_payload as MuxDCTChannel).data.data.gamepad_data.sequence.start, 4)
+            assert.equal((packet.gs_payload as MuxDCTChannel).data.data.gamepad_data.sequence.select, 4)
+            assert.equal((packet.gs_payload as MuxDCTChannel).data.data.gamepad_data.sequence.thumbstick_left, 4)
+            assert.equal((packet.gs_payload as MuxDCTChannel).data.data.gamepad_data.sequence.thumbstick_right, 4)
+            assert.equal((packet.gs_payload as MuxDCTChannel).data.data.gamepad_data.sequence.bumper_left, 0)
+            assert.equal((packet.gs_payload as MuxDCTChannel).data.data.gamepad_data.sequence.bumper_right, 0)
+            assert.equal((packet.gs_payload as MuxDCTChannel).data.data.gamepad_data.sequence.unknown1, 0)
+            assert.equal((packet.gs_payload as MuxDCTChannel).data.data.gamepad_data.sequence.unknown2, 0)
+            assert.equal((packet.gs_payload as MuxDCTChannel).data.data.gamepad_data.sequence.a, 8)
+            assert.equal((packet.gs_payload as MuxDCTChannel).data.data.gamepad_data.sequence.b, 6)
+            assert.equal((packet.gs_payload as MuxDCTChannel).data.data.gamepad_data.sequence.x, 4)
+            assert.equal((packet.gs_payload as MuxDCTChannel).data.data.gamepad_data.sequence.y, 4)
+
+            assert.equal((packet.gs_payload as MuxDCTChannel).data.data.gamepad_data.value.trigger_left, 0)
+            assert.equal((packet.gs_payload as MuxDCTChannel).data.data.gamepad_data.value.trigger_right, 0)
+            assert.equal((packet.gs_payload as MuxDCTChannel).data.data.gamepad_data.value.axis_left_x, 20813)
+            assert.equal((packet.gs_payload as MuxDCTChannel).data.data.gamepad_data.value.axis_left_y, 30322)
+            assert.equal((packet.gs_payload as MuxDCTChannel).data.data.gamepad_data.value.axis_right_x, 0)
+            assert.equal((packet.gs_payload as MuxDCTChannel).data.data.gamepad_data.value.axis_right_y, 0)
+            assert.equal((packet.gs_payload as MuxDCTChannel).data.data.gamepad_data.value.unknown1, 0)
+            assert.equal((packet.gs_payload as MuxDCTChannel).data.data.gamepad_data.value.unknown2, 0)
+            assert.equal((packet.gs_payload as MuxDCTChannel).data.data.gamepad_data.value.unknown3, 0)
+            assert.equal((packet.gs_payload as MuxDCTChannel).data.data.gamepad_data.value.unknown4, 0)
+            assert.equal((packet.gs_payload as MuxDCTChannel).data.data.gamepad_data.value.buttonmask, 0)
+            assert.equal((packet.gs_payload as MuxDCTChannel).data.data.gamepad_data.value.axesmask, 12)
+            assert.equal((packet.gs_payload as MuxDCTChannel).data.data.gamepad_data.value.unknown5, 0)
+            assert.equal((packet.gs_payload as MuxDCTChannel).data.data.gamepad_data.value.unknown6, 0)
+
         });
 
-        // it('should be able to encode (Frame/Input)', function () {
-        //     const data = fs.readFileSync('tests/data/MuxDCTChannel/Frame/Input.bin')
-        //     const packet = loadPacket(data, 'ios_local_21052022')
-        //     const encoded = new MuxDCTChannel({
-        //         type: Types.Frame,
-        //         nextSequence: 9,
-        //         data: new Formats.Frame({
-        //             data: new Formats.FrameFormats.Input({
-        //                 frameId: 2976380527,
-        //                 relativeTimestamp: 212915914679,
-        //                 stats_data: new Formats.FrameFormats.InputFormats.Stats({
-        //                     unknown1: 789502,
-        //                     unknown2: 62,
-        //                     unknown3: 1,
-        //                     unknown4: 79,
-        //                     unknown5: 147,
-        //                 })
-        //             })
-        //         })
-        //     }, packet.rtp_packet.header.payloadTypeReal, packet.rtp_packet.header.ssrc)
+        it('should be able to encode (Frame/Input_Gamepad)', function () {
+            const data = fs.readFileSync('tests/data/MuxDCTChannel/Frame/Input_Gamepad.bin')
+            const packet = loadPacket(data)
+            const encoded = new MuxDCTChannel({
+                type: Types.Frame,
+                nextSequence: 2058,
+                data: new Formats.Frame({
+                    data: new Formats.FrameFormats.Input({
+                        frameId: 3607614472,
+                        relativeTimestamp: 633004950,
+                        stats_data: new Formats.FrameFormats.InputFormats.Stats({
+                            unknown1: 30405,
+                            sequence: 5954,
+                            unknown2: 3,
+                            unknown3: 13,
+                            unknown4: 583,
+                            unknown5: 655,
+                        }),
+                        gamepad_data: new Formats.FrameFormats.InputFormats.Gamepad({
+                            sequence: {
+                                dpad_up: 4,
+                                dpad_down: 4,
+                                dpad_left: 4,
+                                dpad_right: 4,
+                                start: 4,
+                                select: 4,
+                                thumbstick_left: 4,
+                                thumbstick_right: 4,
+                                bumper_left: 0,
+                                bumper_right: 0,
+                                unknown1: 0,
+                                unknown2: 0,
+                                a: 8,
+                                b: 6,
+                                x: 4,
+                                y: 4
+                            },
+                            value: {
+                                trigger_left: 0,
+                                trigger_right: 0,
+                                axis_left_x: 20813,
+                                axis_left_y: 30322,
+                                axis_right_x: 0,
+                                axis_right_y: 0,
+                                unknown1: 0,
+                                unknown2: 0,
+                                unknown3: 0,
+                                unknown4: 0,
+                                buttonmask: 0,
+                                axesmask: 12,
+                                unknown5: 0,
+                                unknown6: 0
+                            }
+                        }),
+                    })
+                })
+            }, packet.rtp_packet.header.payloadTypeReal, packet.rtp_packet.header.ssrc)
             
-        //     assert.deepEqual(encoded.toPacket(), packet.payload.slice(4))
-        // });
+            assert.deepEqual(encoded.toPacket(), packet.payload.slice(4))
+        });
 
         it('should be able to decode (Frame/Ack)', function () {
             const data = fs.readFileSync('tests/data/MuxDCTChannel/Frame/Ack.bin')

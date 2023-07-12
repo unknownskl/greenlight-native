@@ -13,6 +13,8 @@ export default class InputChannel extends Channel {
     _frameInterval
     _frameIntervalActive = false
 
+    _gamepad = new Gamepad()
+
     constructor(application){
         super(application)
 
@@ -24,7 +26,8 @@ export default class InputChannel extends Channel {
                         data: new PacketFormats.MuxDCTChannelFormats.FrameFormats.Input({
                             frameId: this.getFrameId(),
                             relativeTimestamp: this.application.getReferenceTimestamp(),
-                            stats_data: new PacketFormats.MuxDCTChannelFormats.FrameFormats.InputFormats.Stats({ })
+                            stats_data: new PacketFormats.MuxDCTChannelFormats.FrameFormats.InputFormats.Stats({ }),
+                            gamepad_data: this._gamepad.getState(),
                         })
                     })
                 }, 35, 1030), 1030, 35)
@@ -52,6 +55,11 @@ export default class InputChannel extends Channel {
 
             this._frameIntervalActive = true
             console.log(__filename+'[onMessage()] Input channel opened')
+
+            // Lets send a button press after 5 seconds
+            setTimeout(() => {
+                this._gamepad.sendButton()
+            }, 5000)
 
         } else {
             // console.log(__filename+'[onMessage()]: [input] Unknown packet to process: ', payload)
