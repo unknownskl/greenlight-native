@@ -15,6 +15,9 @@ pcap_video_frames:
 	ffmpeg -i video.pcap.mp4 -vsync vfr -frame_pts true frames/out-%01d.jpeg
 
 
+pcap_audio:
+	ffmpeg -i audio.pcap.opus -f f32le
+
 
 # video_test:
 # 	ffmpeg -i client-poc/video.mp4 -vcodec libx264 ./video.mp4

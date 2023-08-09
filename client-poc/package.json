@@ -3,11 +3,13 @@
   "version": "0.1.0",
   "license": "MIT",
   "scripts": {
-    "start": "tsc --skipLibCheck && node dist/index",
+    "start": "tsc && node dist/index",
+    "start:gui": "tsc && node dist/gui",
     "start_webpack": "DEBUG=* node dist/bin/app.js",
     "dev": "DEBUG=* node dist/index.js",
     "prod": "tsc --build && echo \"Creating packed binary...\" && webpack --config webpack.config.js && echo \"JS Binary created: dist/app.js\"",
-    "clean": "rm -rf dist/ && rm -rf *.tsbuildinfo"
+    "clean": "rm -rf dist/ && rm -rf *.tsbuildinfo",
+    "depsb": "cd ../ && yarn build"
   },
   "devDependencies": {
     "@types/node": "^18.7.23",
@@ -16,5 +18,9 @@
     "typescript": "^4.8.4",
     "webpack": "^5.74.0",
     "webpack-cli": "^4.10.0"
+  },
+  "dependencies": {
+    "@kmamal/sdl": "^0.7.8",
+    "ffmpeg-static": "^5.1.0"
   }
 }

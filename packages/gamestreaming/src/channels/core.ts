@@ -2,7 +2,7 @@ import GameStreamingProtocol, { PacketFormats } from 'greenlight-gamestreaming-p
 import { Channel } from '../channel'
 import DCTPacket from 'greenlight-gamestreaming-protocol/dist/DCTPacket'
 
-console.log(GameStreamingProtocol)
+// console.log(GameStreamingProtocol)
 
 export default class CoreChannel extends Channel {
 
@@ -31,7 +31,7 @@ export default class CoreChannel extends Channel {
         // Sequence confirm ACK messages (no-data)
         this._sessionConfirmInterval = setInterval(() => {
             if(this.application._serverSequenceChanged === true){
-                console.log('send ack:', this.application.getMs(true), 'ms:', this.application.getMs())
+                // console.log('send ack:', this.application.getMs(true), 'ms:', this.application.getMs())
 
                 const dummy = new DCTPacket(Buffer.from('0000', 'hex'))
                 this.application.send(dummy.packHeader(Buffer.from('0000', 'hex'), {

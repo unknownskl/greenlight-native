@@ -37,22 +37,11 @@ export default class AudioChannel extends Channel {
             console.log(__filename+'[onMessage()] Audio channel opened')
 
         } else if(payload instanceof PacketFormats.MuxDCTChannel && payload.type === PacketFormats.MuxDCTChannelTypes.None && payload.data instanceof PacketFormats.MuxDCTChannelFormats.DataAudio){
-            console.log(__filename+'[onMessage()]: Received audio frame:', payload.data.frameId, '['+payload.data.data.length+']')
-        //     if(this._messageParts[payload.data.data.totalSize] === undefined){
-        //         this._messageParts[payload.data.data.totalSize] = {
-        //             totalSize: payload.data.data.totalSize,
-        //             data: Buffer.alloc(payload.data.data.totalSize),
-        //             writtenBytes: 0
-        //         }
-        //     }
-
-        //     const bytesWrote = (payload.data.data.data as Buffer).copy(this._messageParts[payload.data.data.totalSize].data, payload.data.data.dataOffset)
-        //     this._messageParts[payload.data.data.totalSize].writtenBytes += bytesWrote
-
-        //     if(this._messageParts[payload.data.data.totalSize].writtenBytes >= payload.data.data.totalSize){
-        //         this._qosPolicy = JSON.parse(this._messageParts[payload.data.data.totalSize].data.slice(0, -1).toString())
-        //         console.log(__filename+'[onMessage()]: [qos] Received policy:', this._qosPolicy)
-        //     }
+            // console.log(__filename+'[onMessage()]: Received audio frame:', payload.data.frameId, '['+payload.data.data.length+']')
+        
+            this.application.events.emit('audio_frame', {
+                data: payload.data
+            })
 
         } else {
             console.log(__filename+'[onMessage()]: [audio] Unknown packet to process: ', payload)

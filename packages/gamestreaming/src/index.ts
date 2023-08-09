@@ -85,11 +85,18 @@ export default class GameStreaming {
         // console.log(msg, rinfo)
 
         const rtpPacket:RtpPacket = new RtpPacket(msg)
-        const SrtpCrypto = rtpPacket.getSrtpCrypto()
-        const crypto = new SrtpCrypto(this.target.srtpkey)
-        const decrypted_payload = crypto.decrypt(rtpPacket)
-        const gsPayload = this.gsProtocol.lookup(rtpPacket.header.payloadTypeReal, rtpPacket.header.ssrc, decrypted_payload)
+        let decrypted_payload
+        try {
+            const SrtpCrypto = rtpPacket.getSrtpCrypto()
+            const crypto = new SrtpCrypto(this.target.srtpkey)
+            decrypted_payload = crypto.decrypt(rtpPacket)
 
+        } catch(error) {
+            console.log('RTP ERROR: Failed to decode: ', msg, this, error)
+            return;
+        }
+
+        const gsPayload = this.gsProtocol.lookup(rtpPacket.header.payloadTypeReal, rtpPacket.header.ssrc, decrypted_payload)
         // this.events.emit('protocol_message_received', {
         //     rtp: rtpPacket,
         //     gsPayload: gsPayload

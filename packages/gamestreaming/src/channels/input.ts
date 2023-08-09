@@ -57,9 +57,9 @@ export default class InputChannel extends Channel {
             console.log(__filename+'[onMessage()] Input channel opened')
 
             // Lets send a button press after 5 seconds
-            setTimeout(() => {
-                this._gamepad.sendButton()
-            }, 5000)
+            // setTimeout(() => {
+            //     this._gamepad.sendButton()
+            // }, 5000)
 
         } else {
             // console.log(__filename+'[onMessage()]: [input] Unknown packet to process: ', payload)

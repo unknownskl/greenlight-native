@@ -2,6 +2,7 @@
   "private": true,
   "scripts": {
     "start": "yarn build && cd client-poc && yarn start",
+    "start:gui": "yarn build && cd client-poc && yarn start:gui",
     "start-pcap": "yarn build && cd client-pcap && yarn start",
     "build": "yarn workspaces foreach -pv run builddeps && yarn workspaces foreach -pv run builddeps2 && yarn workspaces foreach -pv run build && yarn workspace greenlight-client-poc prod",
     "dev": "yarn build && echo \"---[ Starting application output ]--------------\" && cd client-poc && yarn dev",

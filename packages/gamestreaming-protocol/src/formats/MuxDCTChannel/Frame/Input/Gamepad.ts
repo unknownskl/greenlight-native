@@ -14,7 +14,7 @@ export interface GamepadButtons {
     thumbstick_right:number
     bumper_left:number
     bumper_right:number
-    unknown1:number
+    nexus:number
     unknown2:number
     a:number
     b:number
@@ -69,7 +69,7 @@ export default class FrameInputGamepadFormat extends Packet {
                 thumbstick_right: this.read('uint8'),
                 bumper_left: this.read('uint8'),
                 bumper_right: this.read('uint8'),
-                unknown1: this.read('uint8'),
+                nexus: this.read('uint8'),
                 unknown2: this.read('uint8'),
                 a: this.read('uint8'),
                 b: this.read('uint8'),
@@ -118,7 +118,7 @@ export default class FrameInputGamepadFormat extends Packet {
         this.write('uint8', this.sequence.thumbstick_right)
         this.write('uint8', this.sequence.bumper_left)
         this.write('uint8', this.sequence.bumper_right)
-        this.write('uint8', this.sequence.unknown1)
+        this.write('uint8', this.sequence.nexus)
         this.write('uint8', this.sequence.unknown2)
         this.write('uint8', this.sequence.a)
         this.write('uint8', this.sequence.b)

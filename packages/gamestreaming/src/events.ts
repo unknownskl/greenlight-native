@@ -1,4 +1,4 @@
-import * as EventEmitter from 'events'
+import { EventEmitter} from 'events'
 import GameStreaming from './index'
 
 export default class Events extends EventEmitter {

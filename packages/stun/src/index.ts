@@ -40,7 +40,7 @@ export default class StunServer {
 
     constructor(options?:StunServerOptions){
         this.options = {
-            port: 54670,
+            port: 54690,
             ...options
         }
     }

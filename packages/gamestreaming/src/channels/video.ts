@@ -52,11 +52,11 @@ export default class VideoChannel extends Channel {
             console.log(__filename+'[onMessage()] Video channel opened')
 
         } else if(payload instanceof PacketFormats.MuxDCTChannel && payload.type === PacketFormats.MuxDCTChannelTypes.Frame && payload.data.data instanceof PacketFormats.MuxDCTChannelFormats.FrameFormats.Video){
-            console.log(__filename+'[onMessage()]: Received video frame:', payload.data.data.frameId, '['+payload.data.data.data.length+']')
+            // console.log(__filename+'[onMessage()]: Received video frame:', payload.data.data.frameId, '['+payload.data.data.data.length+']')
             this.processVideoData(payload.data.data)
         
         } else if(payload instanceof PacketFormats.MuxDCTChannel && payload.type === PacketFormats.MuxDCTChannelTypes.ConfigAck && payload.data.data instanceof PacketFormats.MuxDCTChannelFormats.FrameFormats.Video){
-            console.log(__filename+'[onMessage()]: Received video key frame:', payload.data.data.frameId, '['+payload.data.data.data.length+']')
+            // console.log(__filename+'[onMessage()]: Received video key frame:', payload.data.data.frameId, '['+payload.data.data.data.length+']')
             this.processVideoData(payload.data.data)
 
         } else {
@@ -70,7 +70,8 @@ export default class VideoChannel extends Channel {
     }
 
     ackFrame(frameId) {
-        console.log('Get ms:', this.application.getReferenceTimestamp()/1000)
+        // console.log('Get ms:', this.application.getReferenceTimestamp()/1000)
+
         const sequence = this.getSequence()
         this.application.sendPayload(new PacketFormats.MuxDCTChannel({
             type: PacketFormats.MuxDCTChannelTypes.Data,
@@ -131,6 +132,14 @@ export default class VideoChannel extends Channel {
                 }
                 delete this.multiFrameBuffer[payload.frameId]
 
+                // Split nal units
+                // const nalUnits = this.splitNALUnits(this.videoFrameBuffer[payload.frameId].data)
+                const nalUnits = this.videoFrameBuffer[payload.frameId].data
+
+                this.application.events.emit('video_frame', {
+                    id: payload.frameId,
+                    data: nalUnits
+                })
                 this.ackFrame(payload.frameId)
             }
         } else {
@@ -139,8 +148,43 @@ export default class VideoChannel extends Channel {
                     metadata: payload.metadata,
                     data: Buffer.concat([payload.metadata, payload.data])
                 }
+
+                // const nalUnits = this.splitNALUnits(this.videoFrameBuffer[payload.frameId].data)
+                const nalUnits = this.videoFrameBuffer[payload.frameId].data
+                
+                this.application.events.emit('video_frame', {
+                    id: payload.frameId,
+                    data: nalUnits
+                })
                 this.ackFrame(payload.frameId)
             }
+        }
+    }
+
+    splitNALUnits(buffer){
+        // console.log('raw:', buffer)
+        let nalUnitsHex = buffer.toString('hex')
+        nalUnitsHex = nalUnitsHex.split('000001')
+        // console.log('SPLIT RESULT:', nalUnitsHex)
+
+        if(nalUnitsHex.length > 1){
+            // We got multiple units
+            const nalUnits = []
+            // console.log('units:', nalUnitsHex)
+            for(const unit in nalUnitsHex){
+                if(unit !== '0')
+                    nalUnitsHex[unit] = Buffer.concat([
+                        Buffer.from('000001'),
+                        Buffer.from(nalUnitsHex[unit])
+                    ]).toString()
+                
+                nalUnits.push(Buffer.from(nalUnitsHex[unit], 'hex'))
+            }
+
+            return nalUnits
+        }  else {
+            // We only got one unit, pass on the data
+            return [ buffer ]
         }
     }
 }

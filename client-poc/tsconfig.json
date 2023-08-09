@@ -1,12 +1,14 @@
 {
     "compilerOptions": {
       /* Basic Options */
+      "skipLibCheck": true,
+      "esModuleInterop": true,
       "declaration": true,
       "declarationMap": true,
       "sourceMap": true,
       "composite": true,
       "outDir": "./dist",
-      "rootDir": "./src"
+      "rootDir": "./src",
     },
     "include": ["src"]
   }
