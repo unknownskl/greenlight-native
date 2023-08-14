@@ -1182,7 +1182,7 @@ describe('MuxDCTChannel', function () {
             assert.equal((packet.gs_payload as MuxDCTChannel).data.data.gamepad_data.sequence.thumbstick_right, 4)
             assert.equal((packet.gs_payload as MuxDCTChannel).data.data.gamepad_data.sequence.bumper_left, 0)
             assert.equal((packet.gs_payload as MuxDCTChannel).data.data.gamepad_data.sequence.bumper_right, 0)
-            assert.equal((packet.gs_payload as MuxDCTChannel).data.data.gamepad_data.sequence.unknown1, 0)
+            assert.equal((packet.gs_payload as MuxDCTChannel).data.data.gamepad_data.sequence.nexus, 0)
             assert.equal((packet.gs_payload as MuxDCTChannel).data.data.gamepad_data.sequence.unknown2, 0)
             assert.equal((packet.gs_payload as MuxDCTChannel).data.data.gamepad_data.sequence.a, 8)
             assert.equal((packet.gs_payload as MuxDCTChannel).data.data.gamepad_data.sequence.b, 6)
