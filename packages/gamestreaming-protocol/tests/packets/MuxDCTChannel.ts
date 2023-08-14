@@ -1236,7 +1236,7 @@ describe('MuxDCTChannel', function () {
                                 thumbstick_right: 4,
                                 bumper_left: 0,
                                 bumper_right: 0,
-                                unknown1: 0,
+                                nexus: 0,
                                 unknown2: 0,
                                 a: 8,
                                 b: 6,
