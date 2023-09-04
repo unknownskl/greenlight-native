@@ -20,7 +20,7 @@ jobs:
 
     steps:
       - name: Checkout Git repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install Node.js, NPM and Yarn
         uses: actions/setup-node@v3.5.1
