@@ -1890,7 +1890,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:^18.7.23":
+"@types/node@npm:*":
   version: 18.7.23
   resolution: "@types/node@npm:18.7.23"
   checksum: 2c8df0830d8345e5cd1ca17feb9cf43fa667aae749888e0a068c5c1b35eaedd2f9b24ed987a0758078395edf7a03681e5e0b7790a518ff7afe1ff6d8459f7b4a
@@ -1911,10 +1911,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^20.3.1":
-  version: 20.3.1
-  resolution: "@types/node@npm:20.3.1"
-  checksum: 63a393ab6d947be17320817b35d7277ef03728e231558166ed07ee30b09fd7c08861be4d746f10fdc63ca7912e8cd023939d4eab887ff6580ff704ff24ed810c
+"@types/node@npm:^20.8.9":
+  version: 20.8.9
+  resolution: "@types/node@npm:20.8.9"
+  dependencies:
+    undici-types: ~5.26.4
+  checksum: 0c05f3502a9507ff27e91dd6fd574fa6f391b3fafedcfe8e0c8d33351fb22d02c0121f854e5b6b3ecb9a8a468407ddf6e7ac0029fb236d4c7e1361ffc758a01f
   languageName: node
   linkType: hard
 
@@ -4366,7 +4368,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "greenlight-client-pcap@workspace:client-pcap"
   dependencies:
-    "@types/node": ^20.3.1
+    "@types/node": ^20.8.9
     "@types/react": ^18.0.26
     autoprefixer: ^10.4.7
     electron: 21.4.4
@@ -4392,7 +4394,7 @@ __metadata:
   resolution: "greenlight-client-poc@workspace:client-poc"
   dependencies:
     "@kmamal/sdl": ^0.7.8
-    "@types/node": ^18.7.23
+    "@types/node": ^20.8.9
     ffmpeg-static: ^5.1.0
     greenlight-xcloud: ^0.1.0
     ts-loader: ^9.4.1
@@ -4409,7 +4411,7 @@ __metadata:
     "@types/chai": ^4
     "@types/debug": ^4.1.7
     "@types/mocha": ^10
-    "@types/node": ^18.7.23
+    "@types/node": ^20.8.9
     chai: ^4.3.6
     debug: ^4.3.4
     greenlight-rtp: "workspace:^"
@@ -4426,7 +4428,7 @@ __metadata:
     "@types/chai": ^4
     "@types/debug": ^4.1.7
     "@types/mocha": ^10
-    "@types/node": ^18.7.23
+    "@types/node": ^20.8.9
     chai: ^4.3.6
     debug: ^4.3.4
     greenlight-gamestreaming-protocol: "workspace:^"
@@ -4444,7 +4446,7 @@ __metadata:
     "@types/chai": ^4
     "@types/debug": ^4.1.7
     "@types/mocha": ^10
-    "@types/node": ^18.7.23
+    "@types/node": ^20.8.9
     chai: ^4.3.6
     debug: ^4.3.4
     mocha: ^10.1.0
@@ -4460,7 +4462,7 @@ __metadata:
     "@types/chai": ^4
     "@types/debug": ^4.1.7
     "@types/mocha": ^10
-    "@types/node": ^18.7.23
+    "@types/node": ^20.8.9
     chai: ^4.3.6
     debug: ^4.3.4
     mocha: ^10.1.0
@@ -4482,7 +4484,7 @@ __metadata:
   dependencies:
     "@types/debug": ^4.1.7
     "@types/mocha": ^10
-    "@types/node": ^18.7.23
+    "@types/node": ^20.8.9
     debug: ^4.3.4
     mocha: ^10.1.0
     typescript: ^4.8.4
@@ -7524,6 +7526,13 @@ __metadata:
     tsc: bin/tsc
     tsserver: bin/tsserver
   checksum: 2eee5c37cad4390385db5db5a8e81470e42e8f1401b0358d7390095d6f681b410f2c4a0c496c6ff9ebd775423c7785cdace7bcdad76c7bee283df3d9718c0f20
+  languageName: node
+  linkType: hard
+
+"undici-types@npm:~5.26.4":
+  version: 5.26.5
+  resolution: "undici-types@npm:5.26.5"
+  checksum: 3192ef6f3fd5df652f2dc1cd782b49d6ff14dc98e5dced492aa8a8c65425227da5da6aafe22523c67f035a272c599bb89cfe803c1db6311e44bed3042fc25487
   languageName: node
   linkType: hard
 
