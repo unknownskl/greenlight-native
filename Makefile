@@ -8,11 +8,12 @@ pcap_video_probe:
 	ffprobe -of compact -show_entries frame=key_frame,pkt_pts_time,pict_type video.pcap.mp4
 
 pcap_video_trace:
-	ffmpeg -v trace -i video.pcap.mp4
+	ffmpeg -v trace -i video.pcap.mp4 video.trace.mkv
 
 pcap_video_frames:
 	rm -rf frames && mkdir frames
 	ffmpeg -i video.pcap.mp4 -vsync vfr -frame_pts true frames/out-%01d.jpeg
+	@echo "Frames extracted to frames/ directory"
 
 
 pcap_audio:

@@ -25,8 +25,8 @@ After changing the above you can compile the script to a packed js file and run 
 
 | Folder | Description |
 |--------|-------------|
-| client-poc | CLI App which interacts with the libraries. |
-| client-pcap | Simple PCAP reader. (very bare) |
+| client-poc | CLI App which interacts with the libraries and renders the stream via node-sdl. |
+| client-pcap | Simple PCAP reader. (very bare, comes with a gui and tool to convert your pcap to a video) |
 | packages/gamestreaming | Actual game streaming logic |
 | packages/gamestreaming-protocol | Library for reading and writing nano packets |
 | packages/rtp | Code for reading and creating RTP Packets |
@@ -41,6 +41,10 @@ After changing the above you can compile the script to a packed js file and run 
 You can convert the video output by running the following ffmpeg command:
 
     ffmpeg -i client-poc/video.mp4 -vcodec libx264 ./video.mp4
+
+or by running:
+
+    make pcap_video
 
 ### Render audio
 
