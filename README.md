@@ -7,6 +7,7 @@ This project is a client for the Xbox in-home streaming protocol. (Also known as
 Requirements:
 - Nodejs LTS
 - Yarn
+- FFMpeg
 
 ### Instructions
 
@@ -14,11 +15,11 @@ Install dependencies first:
 
     yarn
 
-Then edit `client-poc/src/gui.ts` and fill-in the xbox streaming token on line `7`. Also change your consoleid on line `24`.
+Then edit `client-poc/src/gui.ts` and change your consoleid on line `24`.
 
 After changing the above you can compile the script to a packed js file and run it via:
 
-    yarn dev
+    yarn start:gui
 
 ## Project structure
 
