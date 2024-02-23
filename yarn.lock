@@ -3137,6 +3137,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"commander@npm:^11.1.0":
+  version: 11.1.0
+  resolution: "commander@npm:11.1.0"
+  checksum: fd1a8557c6b5b622c89ecdfde703242ab7db3b628ea5d1755784c79b8e7cb0d74d65b4a262289b533359cd58e1bfc0bf50245dfbcd2954682a6f367c828b79ef
+  languageName: node
+  linkType: hard
+
 "commander@npm:^2.20.0":
   version: 2.20.3
   resolution: "commander@npm:2.20.3"
@@ -4399,6 +4406,7 @@ __metadata:
     typescript: ^4.8.4
     webpack: ^5.74.0
     webpack-cli: ^4.10.0
+    xal-node: 1.0.0-beta2
   languageName: unknown
   linkType: soft
 
@@ -4967,6 +4975,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"jose@npm:^5.1.0":
+  version: 5.2.2
+  resolution: "jose@npm:5.2.2"
+  checksum: d23def3c1df8aae1ae59d1c027a073804034fe8b971dafe51f0452ca8f6eb7e5cd3e3c90b6e544776443e01e58c8f8eefbd1984dbcde378e693e0ebbd176584d
+  languageName: node
+  linkType: hard
+
 "js-tokens@npm:^3.0.0 || ^4.0.0, js-tokens@npm:^4.0.0":
   version: 4.0.0
   resolution: "js-tokens@npm:4.0.0"
@@ -5270,6 +5285,13 @@ __metadata:
   version: 7.14.0
   resolution: "lru-cache@npm:7.14.0"
   checksum: efdd329f2c1bb790b71d497c6c59272e6bc2d7dd060ba55fc136becd3dd31fc8346edb446275504d94cb60d3c8385dbf5267b79b23789e409b2bdf302d13f0d7
+  languageName: node
+  linkType: hard
+
+"macaddress@npm:^0.5.1":
+  version: 0.5.3
+  resolution: "macaddress@npm:0.5.3"
+  checksum: f89d24f08f68783a93420baaef990bf6851b0396e9c46590598b53fc730b75e192dad4c0c41f154cd581a2c3bdebe18a4f7e32337b024819844f29d27ff8196e
   languageName: node
   linkType: hard
 
@@ -7659,6 +7681,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"uuid-1345@npm:^1.0.2":
+  version: 1.0.2
+  resolution: "uuid-1345@npm:1.0.2"
+  dependencies:
+    macaddress: ^0.5.1
+  checksum: 5f0973b86cdc9f4dc0b5dd035529302748eb5732ef3f6126be597a9b0ca4b7195e616348c938eefb3b6c325f745ea5d30221cd534d38e5d13e34e3afa392ede0
+  languageName: node
+  linkType: hard
+
 "v8-compile-cache-lib@npm:^3.0.1":
   version: 3.0.1
   resolution: "v8-compile-cache-lib@npm:3.0.1"
@@ -7870,6 +7901,19 @@ __metadata:
   version: 1.0.2
   resolution: "wrappy@npm:1.0.2"
   checksum: 159da4805f7e84a3d003d8841557196034155008f817172d4e986bd591f74aa82aa7db55929a54222309e01079a65a92a9e6414da5a6aa4b01ee44a511ac3ee5
+  languageName: node
+  linkType: hard
+
+"xal-node@npm:1.0.0-beta2":
+  version: 1.0.0-beta2
+  resolution: "xal-node@npm:1.0.0-beta2"
+  dependencies:
+    commander: ^11.1.0
+    jose: ^5.1.0
+    uuid-1345: ^1.0.2
+  bin:
+    xbox-auth: dist/bin/auth.js
+  checksum: 67bedf82ec11aa4cdf243f6a0631d6e520b5e9b561739c25e6df38820d490741cb221cf6089b77bb84d24ded88e5dc659a7116e6593eba1d18cf33bdbd709a9d
   languageName: node
   linkType: hard
 

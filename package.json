@@ -9,7 +9,8 @@
     "dev-pcap": "yarn build && echo \"---[ Starting application output ]--------------\" && cd client-pcap && yarn dev",
     "clean": "yarn workspaces foreach -pv run clean",
     "test": "yarn workspaces foreach -pv run test",
-    "test-pcap": "yarn build && cd client-pcap && yarn pcaptest"
+    "test-pcap": "yarn build && cd client-pcap && yarn pcaptest",
+    "auth": "xbox-auth auth"
   },
   "workspaces": [
     "packages/*",

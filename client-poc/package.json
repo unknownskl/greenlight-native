@@ -7,7 +7,8 @@
     "start:gui": "tsc && node dist/gui",
     "start_webpack": "DEBUG=* node dist/bin/app.js",
     "dev": "DEBUG=* node dist/index.js",
-    "prod": "tsc --build && echo \"Creating packed binary...\" && webpack --config webpack.config.js && echo \"JS Binary created: dist/app.js\"",
+    "prod": "tsc --build",
+    "prod2": "tsc --build && echo \"Creating packed binary...\" && webpack --config webpack.config.js && echo \"JS Binary created: dist/app.js\"",
     "clean": "rm -rf dist/ && rm -rf *.tsbuildinfo",
     "depsb": "cd ../ && yarn build"
   },
@@ -21,6 +22,7 @@
   },
   "dependencies": {
     "@kmamal/sdl": "^0.7.8",
-    "ffmpeg-static": "^5.1.0"
+    "ffmpeg-static": "^5.1.0",
+    "xal-node": "1.0.0-beta2"
   }
 }

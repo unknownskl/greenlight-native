@@ -405,4 +405,114 @@ export default class xCloudApi {
             return false
         }
     }
+
+
+
+
+
+
+
+
+
+
+
+    requestxHomeToken(streamingToken){
+        return new Promise((resolve, reject) => {
+            console.log('authentication', __filename+'[requestxHomeToken()] Requesting xHome streaming tokens')
+
+            // Get xHomeStreaming Token
+            const data = JSON.stringify({
+                "token": streamingToken,
+                "offeringId": "xhome"
+            })
+        
+            const options = {
+                hostname: 'xhome.gssv-play-prod.xboxlive.com',
+                method: 'POST',
+                path: '/v2/login/user',
+            }
+
+            this.request(options, data).then((response:any) => {
+
+                resolve(response)
+            }).catch((error) => {
+                console.log('authentication', __filename+'[requestxHomeToken()] xHome token retrieval error:', error)
+                reject(error)
+            })
+        })
+    }
+
+    requestxCloudToken(streamingToken){
+        return new Promise((resolve, reject) => {
+            console.log('authentication', __filename+'[requestxHomeToken()] Requesting xHome streaming tokens')
+
+            // Get xHomeStreaming Token
+            const data = JSON.stringify({
+                "token": streamingToken,
+                "offeringId": "xgpuweb"
+            })
+        
+            const options = {
+                hostname: 'xgpuweb.gssv-play-prod.xboxlive.com',
+                method: 'POST',
+                path: '/v2/login/user',
+            }
+
+            this.request(options, data).then((response:any) => {
+                resolve(response)
+            }).catch((error) => {
+                console.log('authentication', __filename+'[requestxHomeToken()] xCloud token retrieval error:', error)
+                reject(error)
+            })
+        })
+    }
+
+    request(options, data, headers = {}) {
+
+        return new Promise((resolve, reject) => {
+            const reqOptions = {
+                hostname: '',
+                port: 443,
+                path: '',
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Content-Length': data.length,
+                    'x-gssv-client': 'XboxComBrowser',
+                    ...headers,
+                },
+                ...options
+            }
+            const req = https.request(reqOptions, (res) => {
+                let responseData = ''
+                
+                res.on('data', (data) => {
+                    responseData += data
+                })
+        
+                res.on('close', () => {
+                    if(res.statusCode == 200){
+                        const response = JSON.parse(responseData.toString())
+        
+                        resolve(response)
+                    } else {
+                        console.log('authentication', __filename+'[request()] Request error ['+res.statusCode+']', responseData.toString())
+                        reject({
+                            status: res.statusCode,
+                            body: responseData.toString()
+                        })
+                    }
+                })
+            })
+            
+            req.on('error', (error) => {
+                reject({
+                    error: error
+                })
+            })
+
+            req.write(data)
+            req.end()
+        })
+    }
 }

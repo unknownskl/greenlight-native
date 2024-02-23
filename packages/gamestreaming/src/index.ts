@@ -47,6 +47,7 @@ export default class GameStreaming {
     _rtpSequence = 0
     _clientSequence = 99 // Next one will be 100.
     _serverSequence = 99
+    _serverRoc = 0
     _serverSequenceChanged = false
     _ms = 0
     _referenceTimestamp = process.hrtime.bigint()
@@ -89,7 +90,14 @@ export default class GameStreaming {
         try {
             const SrtpCrypto = rtpPacket.getSrtpCrypto()
             const crypto = new SrtpCrypto(this.target.srtpkey)
-            decrypted_payload = crypto.decrypt(rtpPacket)
+
+            decrypted_payload = crypto.decrypt(rtpPacket, this._serverRoc)
+
+            if(rtpPacket.header.sequence === 65535){
+                // We have to roll over.. Next packet starts with sequence 0 again and roc with 1
+                this._serverRoc++;
+                console.log('Rolling over Server ROC...')
+            }
 
         } catch(error) {
             console.log('RTP ERROR: Failed to decode: ', msg, this, error)
@@ -174,14 +182,16 @@ export default class GameStreaming {
         const rtpPacket:RtpPacket = new RtpPacket()
         rtpPacket.header.payloadType = payloadType
         rtpPacket.header.marker = marker
-        rtpPacket.header.sequence = this._rtpSequence
+        rtpPacket.header.sequence = this._rtpSequence % 65536
         rtpPacket.header.ssrc = ssrc
+
+        const clientRoc = Math.floor(this._rtpSequence / 65536)
 
         // Encrypt packet
         const SrtpCrypto = rtpPacket.getSrtpCrypto()
         rtpPacket.payload = decoded_payload
         const crypto = new SrtpCrypto(this.target.srtpkey)
-        const encrypted_payload = crypto.encrypt(rtpPacket)
+        const encrypted_payload = crypto.encrypt(rtpPacket, clientRoc)
         rtpPacket.payload = encrypted_payload
 
         // Send packet

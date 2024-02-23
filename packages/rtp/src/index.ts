@@ -76,7 +76,7 @@ export default class RtpPacket {
 
         buffer[1] = (this.header.marker) << 0 | (this.header.payloadType)
 
-        buffer.writeUInt16BE(this.header.sequence, 2)
+        buffer.writeUInt16BE(this.header.sequence % (65535+1), 2)
         buffer.writeUInt32BE(this.header.timestamp, 4)
         buffer.writeUInt32BE(this.header.ssrc, 8)
         // this.header.ssrc = this._buffer.readUInt32BE(8)

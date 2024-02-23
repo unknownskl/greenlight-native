@@ -44,20 +44,26 @@ export default class SrtpCrypto {
         }
     }
 
-    decrypt(rtpPacket:RtpPacket){
-        return this._crypt_packet(rtpPacket, false)
+    decrypt(rtpPacket:RtpPacket, roc?:number){
+        return this._crypt_packet(rtpPacket, false, roc)
     }
 
-    encrypt(rtpPacket:RtpPacket){
-        return this._crypt_packet(rtpPacket, true)
+    encrypt(rtpPacket:RtpPacket, roc?:number){
+        return this._crypt_packet(rtpPacket, true, roc)
     }
 
-    _crypt_packet(rtpPacket:RtpPacket, encrypt:boolean){
+    _crypt_packet(rtpPacket:RtpPacket, encrypt:boolean, roc?:number){
         // console.log(rtpPacket)
 
+        // This is never triggered because the srtp crypto context is recreated every time...
         if(rtpPacket.header.sequence < this._sequence){
             this._roc += 1
+            console.log('ROLLING OVER ROC:', this._roc, 'this._sequence:', this._sequence, 'rtpPacket.header.sequence', rtpPacket.header.sequence)
         }
+        if(roc !== undefined){
+            this._roc = roc
+        }
+        console.log('roc:', this._roc, 'this._sequence:', this._sequence, 'rtpPacket.header.sequence', rtpPacket.header.sequence)
 
         this._sequence = rtpPacket.header.sequence
 
