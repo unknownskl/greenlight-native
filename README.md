@@ -15,7 +15,7 @@ Install dependencies first:
 
     yarn
 
-Then edit `client-poc/src/gui.ts` and change your consoleid on line `24`.
+Then edit `client-poc/src/gui.ts` and change your consoleid on line `34`.
 
 After changing the above you can compile the script to a packed js file and run it via:
 

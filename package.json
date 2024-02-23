@@ -3,13 +3,12 @@
   "scripts": {
     "start": "yarn build && cd client-poc && yarn start",
     "start:gui": "yarn build && cd client-poc && yarn start:gui",
-    "start-pcap": "yarn build && cd client-pcap && yarn start",
+    "start:pcap": "yarn build && cd client-pcap && yarn start",
+    "dev:pcap": "yarn build && echo \"---[ Starting application output ]--------------\" && cd client-pcap && yarn dev",
     "build": "yarn workspaces foreach -pv run builddeps && yarn workspaces foreach -pv run builddeps2 && yarn workspaces foreach -pv run build && yarn workspace greenlight-client-poc prod",
-    "dev": "yarn build && echo \"---[ Starting application output ]--------------\" && cd client-poc && yarn dev",
-    "dev-pcap": "yarn build && echo \"---[ Starting application output ]--------------\" && cd client-pcap && yarn dev",
     "clean": "yarn workspaces foreach -pv run clean",
     "test": "yarn workspaces foreach -pv run test",
-    "test-pcap": "yarn build && cd client-pcap && yarn pcaptest",
+    "test:pcap": "yarn build && cd client-pcap && yarn pcaptest && cd .. && make pcap_video",
     "auth": "xbox-auth auth"
   },
   "workspaces": [
