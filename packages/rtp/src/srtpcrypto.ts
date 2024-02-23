@@ -58,12 +58,12 @@ export default class SrtpCrypto {
         // This is never triggered because the srtp crypto context is recreated every time...
         if(rtpPacket.header.sequence < this._sequence){
             this._roc += 1
-            console.log('ROLLING OVER ROC:', this._roc, 'this._sequence:', this._sequence, 'rtpPacket.header.sequence', rtpPacket.header.sequence)
+            // console.log('ROLLING OVER ROC:', this._roc, 'this._sequence:', this._sequence, 'rtpPacket.header.sequence', rtpPacket.header.sequence)
         }
         if(roc !== undefined){
             this._roc = roc
         }
-        console.log('roc:', this._roc, 'this._sequence:', this._sequence, 'rtpPacket.header.sequence', rtpPacket.header.sequence)
+        // console.log('roc:', this._roc, 'this._sequence:', this._sequence, 'rtpPacket.header.sequence', rtpPacket.header.sequence)
 
         this._sequence = rtpPacket.header.sequence
 
