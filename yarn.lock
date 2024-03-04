@@ -1954,14 +1954,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:^18.0.26":
-  version: 18.2.12
-  resolution: "@types/react@npm:18.2.12"
+"@types/react@npm:^18.2.62":
+  version: 18.2.62
+  resolution: "@types/react@npm:18.2.62"
   dependencies:
     "@types/prop-types": "*"
     "@types/scheduler": "*"
     csstype: ^3.0.2
-  checksum: ad85a7eadaf1b35cfeee9f715b39311420ff46d46e0650377d918b3f888c2e47416037da4a765e1dccd3d1916abd54c105a3bee803c971ba56c955a7768ce976
+  checksum: f3979e8d6eadbd27fdbbe10aeaefc164b5a8a1af1df1a099cf8a950b4ea0a6cb6a7b36ff26fccecafcbb9086a908806f4f3b3c826909d97de31fc6bf572feaf1
   languageName: node
   linkType: hard
 
@@ -4579,7 +4579,7 @@ __metadata:
   resolution: "greenlight-client-pcap@workspace:client-pcap"
   dependencies:
     "@types/node": ^20.9.0
-    "@types/react": ^18.0.26
+    "@types/react": ^18.2.62
     autoprefixer: ^10.4.7
     electron: 21.4.4
     electron-builder: ^23.6.0
