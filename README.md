@@ -15,6 +15,10 @@ Install dependencies first:
 
     yarn
 
+Login with your xbox account to authenticate:
+
+    yarn auth
+
 Then edit `client-poc/src/gui.ts` and change your consoleid on line `34`.
 
 After changing the above you can compile the script to a packed js file and run it via:
