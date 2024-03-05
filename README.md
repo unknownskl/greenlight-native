@@ -59,3 +59,8 @@ Dumping audio data is not implemented yet.
 ### Retrieve session SRTP key
 
 You can retrieve the current session SRTP key by searching for 'SRTP' in the output. The key will be printed once every second to the output.
+
+## Credits
+
+- Many thanks to [@tuxuser](https://github.com/tuxuser) for the help and research from the [xcloud-rs](https://github.com/OpenXbox/xcloud-rs) project
+- Thanks to the OpenXbox community for being helpfull and supportive during the research
