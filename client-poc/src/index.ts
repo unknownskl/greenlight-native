@@ -30,11 +30,11 @@ if(tokenStore._jwtKeys){
                         // console.log(':: Stun Servers created:')
                         // console.log(stunInterfaces)
 
-                        apiClient.startSession('xhome', 'F4000EEB7F3EF52A', {
+                        apiClient.startSession('xhome', 'F400000000000000', {
                             ice_user: stun.getIceCredentials().ice_user,
                             ice_pwd: stun.getIceCredentials().ice_pwd,
                             interfaces: stunInterfaces
-                        }).then((configuration:any) => { // One: FD0048D02C570DF8, Series S: F4001ED24E92B799, Series X: F4000EEB7F3EF52A
+                        }).then((configuration:any) => {
                             // console.log(':: Stream configuration:')
                             // console.log(configuration.ice_server)
 
