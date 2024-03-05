@@ -2,6 +2,8 @@
 
 This project is a client for the Xbox in-home streaming protocol. (Also known as Nano V3).
 
+#### This project is research material. The client is working but very unoptimised and lot of features are not implemented. Do not expect an optimised client out of this project.
+
 ## Setup project
 
 Requirements:
