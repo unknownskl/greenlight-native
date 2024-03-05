@@ -9,7 +9,7 @@
     "start": "yarn dev",
     "dev": "nextron",
     "build22": "nextron build",
-    "postinstall": "electron-builder install-app-deps",
+    "postinstall_disabled": "electron-builder install-app-deps",
     "install": "",
     "pcaptest": "rm -rf bin/dist/ && tsc --p tsconfig-bin.json && node bin/dist/bin/testPcap.js"
   },
