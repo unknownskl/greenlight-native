@@ -63,4 +63,4 @@ You can retrieve the current session SRTP key by searching for 'SRTP' in the out
 ## Credits
 
 - Many thanks to [@tuxuser](https://github.com/tuxuser) for the help and research from the [xcloud-rs](https://github.com/OpenXbox/xcloud-rs) project
-- Thanks to the OpenXbox community for being helpfull and supportive during the research
+- Thanks to the [OpenXbox](https://github.com/OpenXbox) community for being helpfull and supportive during the research
