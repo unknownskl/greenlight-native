@@ -1870,21 +1870,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/debug@npm:^4.1.12":
+  version: 4.1.12
+  resolution: "@types/debug@npm:4.1.12"
+  dependencies:
+    "@types/ms": "*"
+  checksum: 47876a852de8240bfdaf7481357af2b88cb660d30c72e73789abf00c499d6bc7cd5e52f41c915d1b9cd8ec9fef5b05688d7b7aef17f7f272c2d04679508d1053
+  languageName: node
+  linkType: hard
+
 "@types/debug@npm:^4.1.6":
   version: 4.1.8
   resolution: "@types/debug@npm:4.1.8"
   dependencies:
     "@types/ms": "*"
   checksum: a9a9bb40a199e9724aa944e139a7659173a9b274798ea7efbc277cb084bc37d32fc4c00877c3496fac4fed70a23243d284adb75c00b5fdabb38a22154d18e5df
-  languageName: node
-  linkType: hard
-
-"@types/debug@npm:^4.1.7":
-  version: 4.1.7
-  resolution: "@types/debug@npm:4.1.7"
-  dependencies:
-    "@types/ms": "*"
-  checksum: 0a7b89d8ed72526858f0b61c6fd81f477853e8c4415bb97f48b1b5545248d2ae389931680b94b393b993a7cfe893537a200647d93defe6d87159b96812305adc
   languageName: node
   linkType: hard
 
@@ -4690,7 +4690,7 @@ __metadata:
   resolution: "greenlight-gamestreaming-protocol@workspace:packages/gamestreaming-protocol"
   dependencies:
     "@types/chai": ^4
-    "@types/debug": ^4.1.7
+    "@types/debug": ^4.1.12
     "@types/mocha": ^10
     "@types/node": ^20.9.0
     chai: ^4.3.6
@@ -4707,7 +4707,7 @@ __metadata:
   resolution: "greenlight-gamestreaming@workspace:packages/gamestreaming"
   dependencies:
     "@types/chai": ^4
-    "@types/debug": ^4.1.7
+    "@types/debug": ^4.1.12
     "@types/mocha": ^10
     "@types/node": ^20.9.0
     chai: ^4.3.6
@@ -4725,7 +4725,7 @@ __metadata:
   resolution: "greenlight-rtp@workspace:packages/rtp"
   dependencies:
     "@types/chai": ^4
-    "@types/debug": ^4.1.7
+    "@types/debug": ^4.1.12
     "@types/mocha": ^10
     "@types/node": ^20.9.0
     chai: ^4.3.6
@@ -4741,7 +4741,7 @@ __metadata:
   resolution: "greenlight-stun@workspace:packages/stun"
   dependencies:
     "@types/chai": ^4
-    "@types/debug": ^4.1.7
+    "@types/debug": ^4.1.12
     "@types/mocha": ^10
     "@types/node": ^20.9.0
     chai: ^4.3.6
@@ -4763,7 +4763,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "greenlight-xcloud@workspace:packages/xcloud"
   dependencies:
-    "@types/debug": ^4.1.7
+    "@types/debug": ^4.1.12
     "@types/mocha": ^10
     "@types/node": ^20.9.0
     debug: ^4.3.4
