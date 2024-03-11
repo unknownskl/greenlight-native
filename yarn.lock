@@ -1644,12 +1644,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@kmamal/sdl@npm:^0.7.8":
-  version: 0.7.8
-  resolution: "@kmamal/sdl@npm:0.7.8"
+"@kmamal/sdl@npm:^0.10.2":
+  version: 0.10.2
+  resolution: "@kmamal/sdl@npm:0.10.2"
   dependencies:
-    tar: ^6.1.15
-  checksum: afd024a47650a81a770028ca55856b9e7995885f36b8b305ae64dc7a6801562daa08d8a6487d24d34fce5eb53937f9840f14144e98f97053fc9eaac171e83985
+    tar: ^6.2.0
+  checksum: 6f1d5c2204405f99656f2c7a6d33f4a2a071473b42749a77555a407e8ff34c7efc80aa2da5a69471569c89323d8ae909ec4e5eeaf898292a3db9876ec50f0d5e
   languageName: node
   linkType: hard
 
@@ -4673,7 +4673,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "greenlight-client-poc@workspace:client-poc"
   dependencies:
-    "@kmamal/sdl": ^0.7.8
+    "@kmamal/sdl": ^0.10.2
     "@types/node": ^20.9.0
     ffmpeg-static: ^5.1.0
     greenlight-xcloud: ^0.1.0
@@ -7567,9 +7567,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tar@npm:^6.1.15":
-  version: 6.1.15
-  resolution: "tar@npm:6.1.15"
+"tar@npm:^6.2.0":
+  version: 6.2.0
+  resolution: "tar@npm:6.2.0"
   dependencies:
     chownr: ^2.0.0
     fs-minipass: ^2.0.0
@@ -7577,7 +7577,7 @@ __metadata:
     minizlib: ^2.1.1
     mkdirp: ^1.0.3
     yallist: ^4.0.0
-  checksum: f23832fceeba7578bf31907aac744ae21e74a66f4a17a9e94507acf460e48f6db598c7023882db33bab75b80e027c21f276d405e4a0322d58f51c7088d428268
+  checksum: db4d9fe74a2082c3a5016630092c54c8375ff3b280186938cfd104f2e089c4fd9bad58688ef6be9cf186a889671bf355c7cda38f09bbf60604b281715ca57f5c
   languageName: node
   linkType: hard
 
